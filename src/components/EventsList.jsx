@@ -1,8 +1,7 @@
 import { useLoaderData } from "react-router-dom";
-import { Flex } from "@chakra-ui/react";
 import { EventsListItem } from "./EventsListItem";
 
-export const loader = async () => {
+export async function loader() {
   const events = await fetch("http://localhost:3000/events");
   const users = await fetch("http://localhost:3000/users");
   const categories = await fetch("http://localhost:3000/categories");
@@ -10,16 +9,16 @@ export const loader = async () => {
   return { events: await events.json(), users: await users.json(), categories: await categories.json() };
 }
 
-export function EventsList() {
-  const { events, users, categories } = useLoaderData();
+export default function EventsList() {
+  // const { events, users, categories } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>(true);
 
-  // console.log("events", events);
-  // console.log("users", users);
-  // console.log("categories", categories);
+  console.log("events: ", events);
+  console.log("users: ", users);
+  console.log("categories", categories);
 
   return (
-    <Flex wrap="wrap" gap={6} justify="center">
-
+    <div className="event-list">
       {events.map((event) => (
         <EventsListItem
           key={event.id}
@@ -27,7 +26,41 @@ export function EventsList() {
           users={users}
           categories={categories}
         />
-      ))} 
-    </Flex>
+      ))}
+    </div>
   );
 }
+
+
+/*
+
+
+(alias) function useLoaderData<T = any>(): SerializeFrom<T>
+import useLoaderData
+
+Returns the data from the closest route loader or clientLoader.
+
+@example
+
+import { useLoaderData } from "react-router";
+
+export async function loader() {
+ return await fakeDb.invoices.findAll();
+}
+
+export default function Invoices() {
+ let invoices = useLoaderData<typeof loader>();
+ // ...
+}
+
+@public
+
+@category — Hooks
+
+@mode — framework
+
+@mode — data
+
+@returns — The data returned from the route's loader or clientLoader function
+
+*/

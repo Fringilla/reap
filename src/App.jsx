@@ -1,8 +1,10 @@
 import "./App.css";
-import { EventsList } from "./components/vanilla/EventsList";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 export default function App() {
   return (
-    <EventsList />
+    <ErrorBoundary>
+      <EventsPage />
+    </ErrorBoundary>
   );
 }

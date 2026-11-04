@@ -6,7 +6,7 @@ import { EventsPage } from './pages/EventsPage';
 import { Provider } from './components/ui/provider';
 import { Root } from './components/Root';
 import { loader as eventsListLoader } from './components/EventsList';
-import ErrorBoundary from './components/ErrorBoundary';
+import Hello from './components/Hello';
 
 const router = createBrowserRouter([
     {
@@ -15,14 +15,14 @@ const router = createBrowserRouter([
         children: [
             {
                 path: '/',
-                element: <EventsPage />,
+                element: <Hello />,
                 hydrateFallbackElement: <div>Loading...</div>,
                 loader: eventsListLoader,
                 // errorElement: <ErrorBoundary />,
             },
             {
                 path: '/event/:eventId',
-                element: <EventPage />,
+                element: <Hello />,
                 hydrateFallbackElement: <div>Loading...</div>,
                 // loader: eventLoader,
                 // action: addComment,
@@ -33,9 +33,9 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
+    <StrictMode>
         <Provider>
             <RouterProvider router={router} />
         </Provider>
-    </React.StrictMode>,
+    </StrictMode>,
 );
