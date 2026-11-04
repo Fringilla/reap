@@ -1,3 +1,3 @@
 @echo off
-json-server data/events.json
-npm run dev
+start json-server data/events.json
+start npm run dev
