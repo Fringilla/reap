@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { EventPage } from './pages/EventPage';
-import { EventsPage } from './pages/EventsPage';
 import { Provider } from './components/ui/provider';
 import { Root } from './components/Root';
-import { loader as eventsListLoader } from './components/EventsList';
+import { EventPage } from './pages/EventPage';
+import { EventsPage, eventsLoader } from './pages/EventsPage';
 
 const router = createBrowserRouter([
     {
@@ -15,17 +14,15 @@ const router = createBrowserRouter([
             {
                 path: '/',
                 element: <EventsPage />,
-                hydrateFallbackElement: <div>Loading...</div>,
-                loader: eventsListLoader,
-                // errorElement: <ErrorBoundary />,
+                hydrateFallbackElement: <div>Loading events...</div>,
+                loader: eventsLoader,
+                // errorElement: <div>Could not load events</div>
             },
             {
                 path: '/event/:eventId',
                 element: <EventPage />,
-                hydrateFallbackElement: <div>Loading...</div>,
-                // loader: eventLoader,
+                // loader: postLoader,
                 // action: addComment,
-                // errorElement: <ErrorBoundary />,
             },
         ],
     },

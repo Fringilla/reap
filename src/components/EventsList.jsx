@@ -1,21 +1,22 @@
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router";
 import { EventsListItem } from "./EventsListItem";
 
 export async function loader() {
   const events = await fetch("http://localhost:3000/events");
-  const users = await fetch("http://localhost:3000/users");
-  const categories = await fetch("http://localhost:3000/categories");
+  // const users = await fetch("http://localhost:3000/users");
+  // const categories = await fetch("http://localhost:3000/categories");
 
-  return { events: await events.json(), users: await users.json(), categories: await categories.json() };
+  return { 
+    events: await events.json(), 
+    // users: await users.json(), 
+    // categories: await categories.json() 
+  };
 }
 
-export default function EventsList() {
-  // const { events, users, categories } = useLoaderData<typeof loader>();
-  const data = useLoaderData<typeof loader>(true);
+export const EventsList = () => {
+  let { events, users = [], categories = [] } = useLoaderData();
 
   console.log("events: ", events);
-  console.log("users: ", users);
-  console.log("categories", categories);
 
   return (
     <div className="event-list">
