@@ -4,12 +4,8 @@ import { Heading,
     Box,
     Button,
     Card,
-    CardHeader,
-    CardBody,
-    CardFooter,
     Flex,
     Image,
-    Text,
  } from '@chakra-ui/react';
 
 export const EventsPage = () => { return (
@@ -24,20 +20,18 @@ export async function eventsLoader() {
   const users = await fetch("http://localhost:3000/users");
   const categories = await fetch("http://localhost:3000/categories");
 
-  return { 
-    events: await events.json(), 
-    users: await users.json(), 
-    categories: await categories.json() 
+  return {
+    events: await events.json(),
+    users: await users.json(),
+    categories: await categories.json()
   };
 }
 
 export const EventsList = () => {
   let { events, users, categories } = useLoaderData();
 
-  //console.log("events: ", events);
-
   return (
-    <div style={{ display: "grid", gridTemplateRows: "auto auto auto auto", rowGap: "0.5rem" }}>
+    <Box style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "1rem", justifyItems: "center" }}>
       {events.map((event) => (
         <EventsListItem
           key={event.id}
@@ -47,7 +41,7 @@ export const EventsList = () => {
           categories={categories}
         />
       ))}
-    </div>
+    </Box>
   );
 }
 
@@ -55,35 +49,31 @@ export function EventsListItem({ id, event, users, categories }) {
 
   return (
     <Card.Root key={id || event.id} maxW="sm" overflow="hidden">
+      <Image src={event.image} alt={event.title} w="100%" />
       <Card.Header>
-        <Image src={event.image} alt={event.title} w="100%" />
         <Card.Title color="orange.500">{event.title}</Card.Title>
       </Card.Header>
       <Card.Body gap="2">
-        <Card.Description>{event.description}</Card.Description>
-        <Card.Description><strong>Location:</strong> {event.location}</Card.Description>
+        <Card.Description fontWeight="normal">{event.description}</Card.Description>
 
-        <Card.Description>
-          <strong>Starts:</strong>{" "}
-          {new Date(event.startTime).toLocaleString()}
+        <Card.Description fontWeight="thin">Location:</Card.Description>
+        <Card.Description fontWeight="semibold">{event.location}</Card.Description>
+
+        <Card.Description fontWeight="thin">Time:</Card.Description>
+        <Card.Description fontWeight="semibold">
+          {new Date(event.startTime).toLocaleString()} - {new Date(event.endTime).toLocaleString()}
         </Card.Description>
 
-        <Card.Description>
-          <strong>Ends:</strong>{" "}
-          {new Date(event.endTime).toLocaleString()}
-        </Card.Description>
+        <Card.Description fontWeight="thin">Categories:</Card.Description>
+        <Card.Description fontWeight="semibold">
+        {getCategoryNames(event.categoryIds, categories).map((categoryName) => (
+          <Badge key={categoryName} variant="solid" mr="1">
+            {categoryName}
+          </Badge>
+        ))}</Card.Description>
 
-        <Card.Description>
-          <strong>Categories:</strong> {getCategoryNames(event.categoryIds, categories).map((categoryName) => (
-            <Badge key={categoryName} variant="solid" mr="1">
-              {categoryName}
-            </Badge>
-          ))}
-        </Card.Description>
-
-        <Card.Description>
-          <strong>Created by:</strong> {getCreator(event.createdBy, users)}
-        </Card.Description>
+        <Card.Description fontWeight="thin">Created by:</Card.Description>
+        <Card.Description fontWeight="semibold">{getCreator(event.createdBy, users)}</Card.Description>
       </Card.Body>
       <Card.Footer>
         <Button mt="2" onClick={() => window.location.href = `/event/${event.id}`}>
@@ -107,7 +97,7 @@ const getCategoryNames = (ids, categories) => {
     .map((cid) => {
       const categoryName = categories.find((c) => c.id == cid)?.name;
       return categoryName;
-    } 
+    }
     ).filter(Boolean);
   return categoryNames;
 };
