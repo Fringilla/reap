@@ -16,7 +16,7 @@ const router = createBrowserRouter([
                 element: <EventsPage />,
                 hydrateFallbackElement: <div>Loading events...</div>,
                 loader: eventsLoader,
-                // errorElement: <div>Could not load events</div>
+                errorElement: <div>Could not load events</div>
             },
             {
                 path: '/event/:eventId',
