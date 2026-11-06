@@ -33,7 +33,7 @@ export const EventsList = () => {
   return (
     <Box style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "1rem", justifyItems: "center" }}>
       {events.map((event) => (
-        <EventsListItem
+        <EventCard
           key={event.id}
           id={event.id}
           event={event}
@@ -45,7 +45,7 @@ export const EventsList = () => {
   );
 }
 
-export function EventsListItem({ id, event, users, categories }) {
+export function EventCard({ id, event, users, categories }) {
 
   return (
     <Card.Root key={id || event.id} maxW="sm" overflow="hidden">
@@ -76,8 +76,8 @@ export function EventsListItem({ id, event, users, categories }) {
         <Card.Description fontWeight="semibold">{getCreator(event.createdBy, users)}</Card.Description>
       </Card.Body>
       <Card.Footer>
-        <Button mt="2" onClick={() => window.location.href = `/event/${event.id}`}>
-          View Event
+        <Button mt="2" variant="subtle" onClick={() => window.location.href = `/event/${event.id}`}>
+          Edit Event
         </Button>
       </Card.Footer>
     </Card.Root>
