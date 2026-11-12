@@ -1,12 +1,16 @@
-import { Flex, Link } from '@chakra-ui/react';
+import { Flex } from "@chakra-ui/react";
+import { Link, useRevalidator } from "react-router-dom";
+import { CreateEventDialog } from "./CreateEventDialog";
 
 export const Navigation = () => {
-    return (
-        <nav>
-            <Flex gap={2} mb={4}>
-                <Link href="/">Events</Link>
-                <Link>Add Event</Link>
-            </Flex>
-        </nav>
-    );
+  const revalidator = useRevalidator();
+
+  return (
+    <nav>
+      <Flex gap={4} mb={4} align="center">
+        <Link to="/">Events</Link>
+        <CreateEventDialog onCreated={() => revalidator.revalidate()} />
+      </Flex>
+    </nav>
+  );
 };

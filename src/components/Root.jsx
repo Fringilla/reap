@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { Navigation } from './Navigation';
+import { Toaster } from './ui/toaster';
 import { Box } from '@chakra-ui/react';
 
 export const Root = () => {
@@ -7,6 +8,7 @@ export const Root = () => {
         <Box>
             <Navigation />
             <Outlet />
+            <Toaster />
         </Box>
     );
 };

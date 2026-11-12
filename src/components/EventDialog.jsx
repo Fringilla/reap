@@ -10,6 +10,7 @@ import {
   Portal,
   Textarea,
 } from "@chakra-ui/react";
+import { toaster } from "./ui/toaster";
 
 export function EventDialog({
   event,
@@ -68,8 +69,15 @@ export function EventDialog({
       onEventUpdated(updatedEvent);
       setFormData(getEditableEvent(updatedEvent));
       setIsEditing(false);
+      toaster.create({
+        title: "Event updated",
+        description: `${updatedEvent.title} was updated successfully.`,
+        type: "success",
+      });
     } catch (error) {
-      setSaveError(error instanceof Error ? error.message : "Could not save the event.");
+      const message = error instanceof Error ? error.message : "Could not save the event.";
+      setSaveError(message);
+      toaster.create({ title: "Could not update event", description: message, type: "error" });
     } finally {
       setIsSaving(false);
     }

@@ -1,0 +1,266 @@
+import { useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  Checkbox,
+  CloseButton,
+  Dialog,
+  Field,
+  Input,
+  Portal,
+  Textarea,
+} from "@chakra-ui/react";
+import { toaster } from "./ui/toaster";
+
+const emptyEvent = {
+  title: "",
+  description: "",
+  image: "",
+  location: "",
+  startTime: "",
+  endTime: "",
+  createdBy: "",
+  categoryIds: [],
+};
+
+export function CreateEventDialog({ onCreated }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoadingOptions, setIsLoadingOptions] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [formData, setFormData] = useState(emptyEvent);
+  const [formError, setFormError] = useState("");
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    let isCurrent = true;
+    const loadFormOptions = async () => {
+      setIsLoadingOptions(true);
+      setFormError("");
+
+      try {
+        const [usersResponse, categoriesResponse] = await Promise.all([
+          fetch("http://localhost:3000/users"),
+          fetch("http://localhost:3000/categories"),
+        ]);
+
+        if (!usersResponse.ok || !categoriesResponse.ok) {
+          throw new Error("Could not load event form options.");
+        }
+
+        const [loadedUsers, loadedCategories] = await Promise.all([
+          usersResponse.json(),
+          categoriesResponse.json(),
+        ]);
+        if (isCurrent) {
+          setUsers(loadedUsers);
+          setCategories(loadedCategories);
+        }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Could not load event form options.";
+        if (isCurrent) {
+          setFormError(message);
+          toaster.create({ title: "Could not load event form", description: message, type: "error" });
+        }
+      } finally {
+        if (isCurrent) setIsLoadingOptions(false);
+      }
+    };
+
+    loadFormOptions();
+    return () => {
+      isCurrent = false;
+    };
+  }, [isOpen]);
+
+  const updateFormField = (field) => (changeEvent) => {
+    setFormData((previous) => ({ ...previous, [field]: changeEvent.target.value }));
+  };
+
+  const resetForm = () => {
+    setFormData(emptyEvent);
+    setFormError("");
+  };
+
+  const handleOpenChange = ({ open }) => {
+    setIsOpen(open);
+    if (!open) resetForm();
+  };
+
+  const handleSubmit = async (submitEvent) => {
+    submitEvent.preventDefault();
+    setFormError("");
+
+    if (formData.categoryIds.length === 0) {
+      setFormError("Select at least one category.");
+      return;
+    }
+
+    const startTime = new Date(formData.startTime);
+    const endTime = new Date(formData.endTime);
+    if (endTime <= startTime) {
+      setFormError("End time must be after start time.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("http://localhost:3000/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: formData.title.trim(),
+          description: formData.description.trim(),
+          image: formData.image.trim(),
+          location: formData.location.trim(),
+          startTime: startTime.toISOString(),
+          endTime: endTime.toISOString(),
+          createdBy: Number(formData.createdBy),
+          categoryIds: formData.categoryIds,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Creating the event failed (${response.status}).`);
+      }
+
+      const createdEvent = await response.json();
+      onCreated();
+      handleOpenChange({ open: false });
+      resetForm();
+      toaster.create({
+        title: "Event created",
+        description: `${createdEvent.title} was added successfully.`,
+        type: "success",
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Could not create the event.";
+      setFormError(message);
+      toaster.create({ title: "Could not create event", description: message, type: "error" });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <>
+      <Button
+        type="button"
+        variant="subtle"
+        onClick={() => {
+          resetForm();
+          setIsOpen(true);
+        }}
+      >
+        Add Event
+      </Button>
+      <Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content>
+              <Dialog.Header>
+                <Dialog.Title>Add an event</Dialog.Title>
+              </Dialog.Header>
+              <Box as="form" display="grid" gap="4" onSubmit={handleSubmit}>
+                <Dialog.Body>
+                  {isLoadingOptions ? (
+                    <Box role="status">Loading form options...</Box>
+                  ) : (
+                    <>
+                      <Field.Root>
+                        <Field.Label>Title</Field.Label>
+                        <Input value={formData.title} onChange={updateFormField("title")} required />
+                      </Field.Root>
+                      <Field.Root>
+                        <Field.Label>Description</Field.Label>
+                        <Textarea value={formData.description} onChange={updateFormField("description")} required />
+                      </Field.Root>
+                      <Field.Root>
+                        <Field.Label>Image URL</Field.Label>
+                        <Input type="url" value={formData.image} onChange={updateFormField("image")} required />
+                      </Field.Root>
+                      <Field.Root>
+                        <Field.Label>Location</Field.Label>
+                        <Input value={formData.location} onChange={updateFormField("location")} required />
+                      </Field.Root>
+                      <Field.Root>
+                        <Field.Label>Start time</Field.Label>
+                        <Input
+                          type="datetime-local"
+                          value={formData.startTime}
+                          onChange={updateFormField("startTime")}
+                          required
+                        />
+                      </Field.Root>
+                      <Field.Root>
+                        <Field.Label>End time</Field.Label>
+                        <Input
+                          type="datetime-local"
+                          value={formData.endTime}
+                          onChange={updateFormField("endTime")}
+                          required
+                        />
+                      </Field.Root>
+                      <Field.Root>
+                        <Field.Label>Created by</Field.Label>
+                        <select
+                          value={formData.createdBy}
+                          onChange={updateFormField("createdBy")}
+                          required
+                          style={{ width: "100%", padding: "0.5rem", borderRadius: "0.375rem" }}
+                        >
+                          <option value="">Select a creator</option>
+                          {users.map((user) => (
+                            <option key={user.id} value={user.id}>{user.name}</option>
+                          ))}
+                        </select>
+                      </Field.Root>
+                      <Field.Root>
+                        <Field.Label>Categories (select at least one)</Field.Label>
+                        <Box display="flex" flexWrap="wrap" gap="3" aria-required="true">
+                          {categories.map((category) => (
+                            <Checkbox.Root
+                              key={category.id}
+                              checked={formData.categoryIds.includes(category.id)}
+                              onCheckedChange={({ checked }) => {
+                                setFormData((previous) => ({
+                                  ...previous,
+                                  categoryIds: checked
+                                    ? [...previous.categoryIds, category.id]
+                                    : previous.categoryIds.filter((categoryId) => categoryId !== category.id),
+                                }));
+                              }}
+                            >
+                              <Checkbox.HiddenInput />
+                              <Checkbox.Control />
+                              <Checkbox.Label>{category.name}</Checkbox.Label>
+                            </Checkbox.Root>
+                          ))}
+                        </Box>
+                      </Field.Root>
+                    </>
+                  )}
+                  {formError && <Box role="alert" color="red.500" mt="3">{formError}</Box>}
+                </Dialog.Body>
+                <Dialog.Footer>
+                  <Button type="button" variant="subtle" onClick={() => handleOpenChange({ open: false })}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isLoadingOptions || isSubmitting}>
+                    {isSubmitting ? "Creating..." : "Create event"}
+                  </Button>
+                </Dialog.Footer>
+              </Box>
+              <Dialog.CloseTrigger asChild>
+                <CloseButton aria-label="Close dialog" />
+              </Dialog.CloseTrigger>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
+    </>
+  );
+}
