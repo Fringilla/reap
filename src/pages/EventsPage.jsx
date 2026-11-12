@@ -1,28 +1,30 @@
 import { useState } from "react";
-import { useLoaderData } from "react-router";
-import { Box, Button, Checkbox, Field, Heading, Input, Text } from "@chakra-ui/react";
+import { Box, Button, Checkbox, Field, Heading, Input, Skeleton, Text } from "@chakra-ui/react";
 import { EventCard } from "../components/EventCard";
+import { useAppData } from "../context/AppDataContext";
 
-export const EventsPage = () => { return (
-  <EventsList />
-)};
-
-export async function eventsLoader() {
-  const events = await fetch("http://localhost:3000/events");
-  const users = await fetch("http://localhost:3000/users");
-  const categories = await fetch("http://localhost:3000/categories");
-
-  return {
-    events: await events.json(),
-    users: await users.json(),
-    categories: await categories.json()
-  };
-}
+export const EventsPage = () => <EventsList />;
 
 export const EventsList = () => {
-  const { events, users, categories } = useLoaderData();
+  const { events, users, categories, isLoading, error } = useAppData();
   const [searchText, setSearchText] = useState("");
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+  if (isLoading) {
+    return (
+      <Box>
+        <Heading mb="4">List of events</Heading>
+        <Box display="grid" gridTemplateColumns="repeat(auto-fill, minmax(280px, 1fr))" gap="4">
+          {[0, 1, 2, 3].map((placeholder) => (
+            <Skeleton key={placeholder} height="320px" borderRadius="md" />
+          ))}
+        </Box>
+      </Box>
+    );
+  }
+  if (error) {
+    return <Text role="alert">Could not load events: {error}</Text>;
+  }
+
   const normalizedSearch = searchText.trim().toLocaleLowerCase();
   const filteredEvents = events.filter((event) => {
     const matchesTitle = event.title.toLocaleLowerCase().includes(normalizedSearch);

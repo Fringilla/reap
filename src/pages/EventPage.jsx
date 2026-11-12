@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link, useLoaderData, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Badge,
   Box,
@@ -10,49 +10,38 @@ import {
   Heading,
   Image,
   Portal,
+  Skeleton,
   Text,
 } from "@chakra-ui/react";
 import { EventDialog } from "../components/EventDialog";
 import { toaster } from "../components/ui/toaster";
-
-export async function eventLoader({ params }) {
-  const [eventResponse, usersResponse, categoriesResponse] = await Promise.all([
-    fetch(`http://localhost:3000/events/${params.eventId}`),
-    fetch("http://localhost:3000/users"),
-    fetch("http://localhost:3000/categories"),
-  ]);
-
-  if (!eventResponse.ok) {
-    throw new Response("Could not load this event.", { status: eventResponse.status });
-  }
-  if (!usersResponse.ok || !categoriesResponse.ok) {
-    throw new Response("Could not load event details.", { status: 500 });
-  }
-
-  return {
-    event: await eventResponse.json(),
-    users: await usersResponse.json(),
-    categories: await categoriesResponse.json(),
-  };
-}
+import { useAppData } from "../context/AppDataContext";
 
 export const EventPage = () => {
-  const { event: loadedEvent, users, categories } = useLoaderData();
+  const { events, users, categories, isLoading, error, updateEvent, removeEvent } = useAppData();
+  const { eventId } = useParams();
   const navigate = useNavigate();
-  const [event, setEvent] = useState(loadedEvent);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
 
-  useEffect(() => {
-    setEvent(loadedEvent);
-  }, [loadedEvent]);
+  if (isLoading) {
+    return <Skeleton height="400px" m="8" borderRadius="md" />;
+  }
+  if (error) {
+    return <Text role="alert">Could not load event details: {error}</Text>;
+  }
+
+  const event = events.find((item) => String(item.id) === eventId);
+  if (!event) {
+    return <Text role="alert">Event not found.</Text>;
+  }
 
   const categoryNames = event.categoryIds
-    .map((categoryId) => categories.find((category) => category.id === categoryId)?.name)
+    .map((categoryId) => categories.find((category) => String(category.id) === String(categoryId))?.name)
     .filter(Boolean);
-  const creatorName = users.find((user) => user.id === event.createdBy)?.name ?? "Unknown";
+  const creatorName = users.find((user) => String(user.id) === String(event.createdBy))?.name ?? "Unknown";
 
   const handleDeleteOpenChange = ({ open }) => {
     if (isDeleting) return;
@@ -77,6 +66,7 @@ export const EventPage = () => {
         description: `${event.title} was deleted successfully.`,
         type: "success",
       });
+      removeEvent(event.id);
       setIsDeleteOpen(false);
       navigate("/", { replace: true });
     } catch (error) {
@@ -148,7 +138,7 @@ export const EventPage = () => {
         creatorName={creatorName}
         open={isEditOpen}
         onOpenChange={setIsEditOpen}
-        onEventUpdated={setEvent}
+        onEventUpdated={updateEvent}
       />
       <Dialog.Root open={isDeleteOpen} onOpenChange={handleDeleteOpenChange}>
         <Portal>

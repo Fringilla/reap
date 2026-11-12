@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -11,6 +11,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { toaster } from "./ui/toaster";
+import { useAppData } from "../context/AppDataContext";
 
 const emptyEvent = {
   title: "",
@@ -23,57 +24,12 @@ const emptyEvent = {
   categoryIds: [],
 };
 
-export function CreateEventDialog({ onCreated }) {
+export function CreateEventDialog() {
+  const { categories, users, isLoading, error, addEvent } = useAppData();
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoadingOptions, setIsLoadingOptions] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState(emptyEvent);
   const [formError, setFormError] = useState("");
-
-  useEffect(() => {
-    if (!isOpen) return undefined;
-
-    let isCurrent = true;
-    const loadFormOptions = async () => {
-      setIsLoadingOptions(true);
-      setFormError("");
-
-      try {
-        const [usersResponse, categoriesResponse] = await Promise.all([
-          fetch("http://localhost:3000/users"),
-          fetch("http://localhost:3000/categories"),
-        ]);
-
-        if (!usersResponse.ok || !categoriesResponse.ok) {
-          throw new Error("Could not load event form options.");
-        }
-
-        const [loadedUsers, loadedCategories] = await Promise.all([
-          usersResponse.json(),
-          categoriesResponse.json(),
-        ]);
-        if (isCurrent) {
-          setUsers(loadedUsers);
-          setCategories(loadedCategories);
-        }
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "Could not load event form options.";
-        if (isCurrent) {
-          setFormError(message);
-          toaster.create({ title: "Could not load event form", description: message, type: "error" });
-        }
-      } finally {
-        if (isCurrent) setIsLoadingOptions(false);
-      }
-    };
-
-    loadFormOptions();
-    return () => {
-      isCurrent = false;
-    };
-  }, [isOpen]);
 
   const updateFormField = (field) => (changeEvent) => {
     setFormData((previous) => ({ ...previous, [field]: changeEvent.target.value }));
@@ -127,7 +83,7 @@ export function CreateEventDialog({ onCreated }) {
       }
 
       const createdEvent = await response.json();
-      onCreated();
+      addEvent(createdEvent);
       handleOpenChange({ open: false });
       resetForm();
       toaster.create({
@@ -149,6 +105,7 @@ export function CreateEventDialog({ onCreated }) {
       <Button
         type="button"
         variant="subtle"
+        disabled={isLoading || Boolean(error)}
         onClick={() => {
           resetForm();
           setIsOpen(true);
@@ -166,8 +123,10 @@ export function CreateEventDialog({ onCreated }) {
               </Dialog.Header>
               <Box as="form" display="grid" gap="4" onSubmit={handleSubmit}>
                 <Dialog.Body>
-                  {isLoadingOptions ? (
+                  {isLoading ? (
                     <Box role="status">Loading form options...</Box>
+                  ) : error ? (
+                    <Box role="alert" color="red.500">{error}</Box>
                   ) : (
                     <>
                       <Field.Root>
@@ -249,7 +208,7 @@ export function CreateEventDialog({ onCreated }) {
                   <Button type="button" variant="subtle" onClick={() => handleOpenChange({ open: false })}>
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={isLoadingOptions || isSubmitting}>
+                  <Button type="submit" disabled={isLoading || Boolean(error) || isSubmitting}>
                     {isSubmitting ? "Creating..." : "Create event"}
                   </Button>
                 </Dialog.Footer>

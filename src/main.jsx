@@ -2,9 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Provider } from './components/ui/provider';
+import { AppDataProvider } from './context/AppDataContext';
 import { Root } from './components/Root';
-import { EventPage, eventLoader } from './pages/EventPage';
-import { EventsPage, eventsLoader } from './pages/EventsPage';
+import { EventPage } from './pages/EventPage';
+import { EventsPage } from './pages/EventsPage';
+import AboutPage from './pages/AboutPage';
 
 const router = createBrowserRouter([
     {
@@ -14,16 +16,14 @@ const router = createBrowserRouter([
             {
                 path: '/',
                 element: <EventsPage />,
-                loader: eventsLoader,
-                hydrateFallbackElement: <p>Loading events...</p>,
-                errorElement: <p>Could not load events</p>
             },
             {
                 path: '/event/:eventId',
                 element: <EventPage />,
-                loader: eventLoader,
-                hydrateFallbackElement: <p>Loading event...</p>,
-                errorElement: <p>Could not load event</p>
+            },
+            {
+                path: '/about',
+                element: <AboutPage />,
             },
         ],
     },
@@ -32,7 +32,9 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <Provider>
-            <RouterProvider router={router} />
+            <AppDataProvider>
+                <RouterProvider router={router} />
+            </AppDataProvider>
         </Provider>
     </React.StrictMode>,
 );
