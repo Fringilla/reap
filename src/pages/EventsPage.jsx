@@ -47,7 +47,6 @@ export const EventsList = () => {
 
   return (
     <Box p={{ base: "4", md: "6" }}>
-      <Heading mb="4">List of events</Heading>
       <Box mb="6" display="grid" gap="4">
         <Field.Root>
           <Field.Label>Search events by title</Field.Label>

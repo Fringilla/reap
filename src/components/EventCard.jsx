@@ -40,7 +40,6 @@ export function EventCard({ id, event, users, categories }) {
           <Card.Description fontWeight="semibold">{creatorName}</Card.Description>
         </Card.Body>
         <Card.Footer>
-          <Card.Description color="orange.500">View event details</Card.Description>
         </Card.Footer>
       </Card.Root>
     </Link>

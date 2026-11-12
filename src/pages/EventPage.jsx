@@ -80,9 +80,6 @@ export const EventPage = () => {
 
   return (
     <Box maxW="4xl" mx="auto" p={{ base: "4", md: "8" }}>
-      <Link to="/" style={{ display: "inline-block", marginBottom: "1rem" }}>
-        Back to events
-      </Link>
       <Card.Root overflow="hidden">
         <Image src={event.image} alt={event.title} w="100%" maxH="420px" objectFit="cover" />
         <Card.Header>
@@ -118,6 +115,12 @@ export const EventPage = () => {
           </Box>
         </Card.Body>
         <Card.Footer>
+          {/* <Link to="/" style={{ display: "inline-block", marginBottom: "1rem" }}>
+          Back to events
+          </Link> */}
+          <Button onClick={() => navigate("/")} type="button" variant="subtle">
+            Back
+          </Button>
           <Button onClick={() => setIsEditOpen(true)}>Edit Event</Button>
           <Button
             colorPalette="red"
