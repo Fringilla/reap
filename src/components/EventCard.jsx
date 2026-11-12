@@ -1,48 +1,30 @@
-import { useState } from "react";
-import { Badge, Button, Card, Image } from "@chakra-ui/react";
-import { EventDialog } from "./EventDialog";
+import { Badge, Card, Image } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
 export function EventCard({ id, event, users, categories }) {
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [currentEvent, setCurrentEvent] = useState(event);
-  const categoryNames = getCategoryNames(currentEvent.categoryIds, categories);
-  const creatorName = getCreator(currentEvent.createdBy, users);
-
-  const openDetails = () => setIsDetailsOpen(true);
-  const handleCardKeyDown = (keyEvent) => {
-    if (keyEvent.target === keyEvent.currentTarget && (keyEvent.key === "Enter" || keyEvent.key === " ")) {
-      keyEvent.preventDefault();
-      openDetails();
-    }
-  };
+  const categoryNames = getCategoryNames(event.categoryIds, categories);
+  const creatorName = getCreator(event.createdBy, users);
 
   return (
-    <>
-      <Card.Root
-        key={id || event.id}
-        maxW="sm"
-        overflow="hidden"
-        cursor="pointer"
-        role="button"
-        tabIndex={0}
-        aria-haspopup="dialog"
-        aria-label={`View details for ${currentEvent.title}`}
-        onClick={openDetails}
-        onKeyDown={handleCardKeyDown}
-      >
-        <Image src={currentEvent.image} alt={currentEvent.title} w="100%" />
+    <Link
+      to={`/event/${id ?? event.id}`}
+      aria-label={`View details for ${event.title}`}
+      style={{ display: "block", color: "inherit", textDecoration: "none" }}
+    >
+      <Card.Root maxW="sm" overflow="hidden">
+        <Image src={event.image} alt={event.title} w="100%" />
         <Card.Header>
-          <Card.Title color="orange.500">{currentEvent.title}</Card.Title>
+          <Card.Title color="orange.500">{event.title}</Card.Title>
         </Card.Header>
         <Card.Body gap="2">
-          <Card.Description fontWeight="normal">{currentEvent.description}</Card.Description>
+          <Card.Description fontWeight="normal">{event.description}</Card.Description>
 
           <Card.Description fontWeight="thin">Location:</Card.Description>
-          <Card.Description fontWeight="semibold">{currentEvent.location}</Card.Description>
+          <Card.Description fontWeight="semibold">{event.location}</Card.Description>
 
           <Card.Description fontWeight="thin">Time:</Card.Description>
           <Card.Description fontWeight="semibold">
-            {new Date(currentEvent.startTime).toLocaleString()} - {new Date(currentEvent.endTime).toLocaleString()}
+            {new Date(event.startTime).toLocaleString()} - {new Date(event.endTime).toLocaleString()}
           </Card.Description>
 
           <Card.Description fontWeight="thin">Categories:</Card.Description>
@@ -58,20 +40,10 @@ export function EventCard({ id, event, users, categories }) {
           <Card.Description fontWeight="semibold">{creatorName}</Card.Description>
         </Card.Body>
         <Card.Footer>
-          <Button mt="2" variant="subtle" onClick={openDetails}>View details</Button>
+          <Card.Description color="orange.500">View event details</Card.Description>
         </Card.Footer>
       </Card.Root>
-
-      <EventDialog
-        event={currentEvent}
-        categories={categories}
-        categoryNames={categoryNames}
-        creatorName={creatorName}
-        open={isDetailsOpen}
-        onOpenChange={setIsDetailsOpen}
-        onEventUpdated={setCurrentEvent}
-      />
-    </>
+    </Link>
   );
 }
 

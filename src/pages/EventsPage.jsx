@@ -3,10 +3,7 @@ import { Box, Heading } from '@chakra-ui/react';
 import { EventCard } from "../components/EventCard";
 
 export const EventsPage = () => { return (
-  <>
-    <Heading>List of events</Heading>
-    <EventsList />
-  </>
+  <EventsList />
 )};
 
 export async function eventsLoader() {
