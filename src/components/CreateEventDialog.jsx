@@ -188,9 +188,18 @@ export function CreateEventDialog() {
                           ))}
                         </select>
                       </Field.Root>
-                      <Field.Root>
-                        <Field.Label>Categories (select at least one)</Field.Label>
-                        <Box display="flex" flexWrap="wrap" gap="3" aria-required="true">
+                      <Box
+                        as="fieldset"
+                        border="0"
+                        p="0"
+                        m="0"
+                        minW="0"
+                        aria-required="true"
+                      >
+                        <Box as="legend" fontWeight="medium" mb="2">
+                          Categories (select at least one)
+                        </Box>
+                        <Box display="flex" flexWrap="wrap" gap="3">
                           {categories.map((category) => (
                             <Checkbox.Root
                               key={category.id}
@@ -210,7 +219,7 @@ export function CreateEventDialog() {
                             </Checkbox.Root>
                           ))}
                         </Box>
-                      </Field.Root>
+                      </Box>
                     </>
                   )}
                   {formError && <Box role="alert" color="red.500" mt="3">{formError}</Box>}

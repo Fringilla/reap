@@ -185,10 +185,17 @@ export function EventDialog({
                     required={isEditing}
                   />
                 </Field.Root>
-                <Field.Root>
-                  <Field.Label>Categories</Field.Label>
-                  {isEditing ? (
-                    <Box display="flex" flexWrap="wrap" gap="3" aria-required="true">
+                {isEditing ? (
+                  <Box
+                    as="fieldset"
+                    border="0"
+                    p="0"
+                    m="0"
+                    minW="0"
+                    aria-required="true"
+                  >
+                    <Box as="legend" fontWeight="medium" mb="2">Categories</Box>
+                    <Box display="flex" flexWrap="wrap" gap="3">
                       {categories.map((category) => (
                         <Checkbox.Root
                           key={category.id}
@@ -208,10 +215,13 @@ export function EventDialog({
                         </Checkbox.Root>
                       ))}
                     </Box>
-                  ) : (
+                  </Box>
+                ) : (
+                  <Field.Root>
+                    <Field.Label>Categories</Field.Label>
                     <Input value={categoryNames.join(", ")} readOnly />
-                  )}
-                </Field.Root>
+                  </Field.Root>
+                )}
                 <Field.Root>
                   <Field.Label>Created by</Field.Label>
                   <Input value={creatorName} readOnly />
