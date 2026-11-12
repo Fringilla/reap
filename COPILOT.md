@@ -24,7 +24,7 @@ I compared [README.md](README.md) and [PROJECT.md](PROJECT.md) with the current 
 1. [x] Build the actual event detail route and make cards navigate to it.
 2. [-] Add create-event flow and success/failure notifications.
 3. [-] Add search and multi-category filters.
-4. [ ] Add delete with confirmation and redirect.
+4. [-] Add delete with confirmation and redirect.
 5. [ ] Introduce Context for events and categories, then add the third page and navigation link.
 6. [ ] Finish with required-field/date validation, skeleton loading, and mobile/desktop checks.
 
