@@ -46,7 +46,7 @@ export const EventsList = () => {
   };
 
   return (
-    <Box>
+    <Box p={{ base: "4", md: "6" }}>
       <Heading mb="4">List of events</Heading>
       <Box mb="6" display="grid" gap="4">
         <Field.Root>
@@ -85,7 +85,12 @@ export const EventsList = () => {
         </Button>
       </Box>
       {filteredEvents.length > 0 ? (
-        <Box style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "1rem", justifyItems: "center" }}>
+        <Box
+          display="grid"
+          gridTemplateColumns="repeat(auto-fill, minmax(min(100%, 350px), 1fr))"
+          gap="4"
+          justifyItems="center"
+        >
           {filteredEvents.map((event) => (
             <EventCard
               key={event.id}

@@ -47,17 +47,38 @@ export function EventDialog({
   };
   const handleSave = async (submitEvent) => {
     submitEvent.preventDefault();
-    setIsSaving(true);
     setSaveError("");
 
+    const requiredFields = ["title", "description", "image", "location", "startTime", "endTime"];
+    if (requiredFields.some((field) => !String(formData[field]).trim())) {
+      setSaveError("Complete all required fields.");
+      return;
+    }
+    if (formData.categoryIds.length === 0) {
+      setSaveError("Select at least one category.");
+      return;
+    }
+
+    const startTime = new Date(formData.startTime);
+    const endTime = new Date(formData.endTime);
+    if (Number.isNaN(startTime.getTime()) || Number.isNaN(endTime.getTime())) {
+      setSaveError("Enter valid start and end times.");
+      return;
+    }
+    if (endTime <= startTime) {
+      setSaveError("End time must be after start time.");
+      return;
+    }
+
+    setIsSaving(true);
     try {
       const response = await fetch(`http://localhost:3000/events/${event.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          startTime: new Date(formData.startTime).toISOString(),
-          endTime: new Date(formData.endTime).toISOString(),
+          startTime: startTime.toISOString(),
+          endTime: endTime.toISOString(),
         }),
       });
 
@@ -94,12 +115,17 @@ export function EventDialog({
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content onClick={(clickEvent) => clickEvent.stopPropagation()}>
+          <Dialog.Content
+            maxH="calc(100vh - 6rem)"
+            display="flex"
+            flexDirection="column"
+            onClick={(clickEvent) => clickEvent.stopPropagation()}
+          >
             <Dialog.Header>
               <Dialog.Title>{isEditing ? formData.title : event.title}</Dialog.Title>
             </Dialog.Header>
-            <Box as="form" display="grid" gap="4" onSubmit={handleSave}>
-              <Dialog.Body>
+            <Box as="form" display="flex" flexDirection="column" flex="1" minH="0" gap="4" onSubmit={handleSave}>
+              <Dialog.Body flex="1" minH="0" overflowY="auto">
                 <Field.Root>
                   <Field.Label>Title</Field.Label>
                   <Input
@@ -115,6 +141,7 @@ export function EventDialog({
                     value={isEditing ? formData.description : event.description}
                     onChange={updateFormField("description")}
                     readOnly={!isEditing}
+                    required={isEditing}
                   />
                 </Field.Root>
                 <Field.Root>
@@ -142,6 +169,7 @@ export function EventDialog({
                     type={isEditing ? "datetime-local" : "text"}
                     value={isEditing ? formData.startTime : new Date(event.startTime).toLocaleString()}
                     onChange={updateFormField("startTime")}
+                    max={isEditing ? formData.endTime || undefined : undefined}
                     readOnly={!isEditing}
                     required={isEditing}
                   />
@@ -152,6 +180,7 @@ export function EventDialog({
                     type={isEditing ? "datetime-local" : "text"}
                     value={isEditing ? formData.endTime : new Date(event.endTime).toLocaleString()}
                     onChange={updateFormField("endTime")}
+                    min={isEditing ? formData.startTime || undefined : undefined}
                     readOnly={!isEditing}
                     required={isEditing}
                   />
@@ -159,7 +188,7 @@ export function EventDialog({
                 <Field.Root>
                   <Field.Label>Categories</Field.Label>
                   {isEditing ? (
-                    <Box display="flex" flexWrap="wrap" gap="3">
+                    <Box display="flex" flexWrap="wrap" gap="3" aria-required="true">
                       {categories.map((category) => (
                         <Checkbox.Root
                           key={category.id}
@@ -189,7 +218,7 @@ export function EventDialog({
                 </Field.Root>
                 {saveError && <Box role="alert" color="red.500">{saveError}</Box>}
               </Dialog.Body>
-              <Dialog.Footer>
+              <Dialog.Footer flexShrink="0">
                 {isEditing ? (
                   <>
                     <Button type="submit" disabled={isSaving}>

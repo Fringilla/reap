@@ -49,6 +49,11 @@ export function CreateEventDialog() {
     submitEvent.preventDefault();
     setFormError("");
 
+    const requiredFields = ["title", "description", "image", "location", "startTime", "endTime", "createdBy"];
+    if (requiredFields.some((field) => !String(formData[field]).trim())) {
+      setFormError("Complete all required fields.");
+      return;
+    }
     if (formData.categoryIds.length === 0) {
       setFormError("Select at least one category.");
       return;
@@ -56,6 +61,10 @@ export function CreateEventDialog() {
 
     const startTime = new Date(formData.startTime);
     const endTime = new Date(formData.endTime);
+    if (Number.isNaN(startTime.getTime()) || Number.isNaN(endTime.getTime())) {
+      setFormError("Enter valid start and end times.");
+      return;
+    }
     if (endTime <= startTime) {
       setFormError("End time must be after start time.");
       return;
@@ -117,12 +126,12 @@ export function CreateEventDialog() {
         <Portal>
           <Dialog.Backdrop />
           <Dialog.Positioner>
-            <Dialog.Content>
+            <Dialog.Content maxH="calc(100vh - 6rem)" display="flex" flexDirection="column">
               <Dialog.Header>
                 <Dialog.Title>Add an event</Dialog.Title>
               </Dialog.Header>
-              <Box as="form" display="grid" gap="4" onSubmit={handleSubmit}>
-                <Dialog.Body>
+              <Box as="form" display="flex" flexDirection="column" flex="1" minH="0" gap="4" onSubmit={handleSubmit}>
+                <Dialog.Body flex="1" minH="0" overflowY="auto">
                   {isLoading ? (
                     <Box role="status">Loading form options...</Box>
                   ) : error ? (
@@ -151,6 +160,7 @@ export function CreateEventDialog() {
                           type="datetime-local"
                           value={formData.startTime}
                           onChange={updateFormField("startTime")}
+                          max={formData.endTime || undefined}
                           required
                         />
                       </Field.Root>
@@ -160,6 +170,7 @@ export function CreateEventDialog() {
                           type="datetime-local"
                           value={formData.endTime}
                           onChange={updateFormField("endTime")}
+                          min={formData.startTime || undefined}
                           required
                         />
                       </Field.Root>
@@ -204,7 +215,7 @@ export function CreateEventDialog() {
                   )}
                   {formError && <Box role="alert" color="red.500" mt="3">{formError}</Box>}
                 </Dialog.Body>
-                <Dialog.Footer>
+                <Dialog.Footer flexShrink="0">
                   <Button type="button" variant="subtle" onClick={() => handleOpenChange({ open: false })}>
                     Cancel
                   </Button>
