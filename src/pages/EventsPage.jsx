@@ -1,18 +1,12 @@
 import { useLoaderData } from "react-router";
-import { Heading,
-    Badge,
-    Box,
-    Button,
-    Card,
-    Flex,
-    Image,
- } from '@chakra-ui/react';
+import { Box, Heading } from '@chakra-ui/react';
+import { EventCard } from "../components/EventCard";
 
 export const EventsPage = () => { return (
-    <>
-        <Heading>List of events</Heading>
-        <EventsList />
-    </>
+  <>
+    <Heading>List of events</Heading>
+    <EventsList />
+  </>
 )};
 
 export async function eventsLoader() {
@@ -44,60 +38,3 @@ export const EventsList = () => {
     </Box>
   );
 }
-
-export function EventCard({ id, event, users, categories }) {
-
-  return (
-    <Card.Root key={id || event.id} maxW="sm" overflow="hidden">
-      <Image src={event.image} alt={event.title} w="100%" />
-      <Card.Header>
-        <Card.Title color="orange.500">{event.title}</Card.Title>
-      </Card.Header>
-      <Card.Body gap="2">
-        <Card.Description fontWeight="normal">{event.description}</Card.Description>
-
-        <Card.Description fontWeight="thin">Location:</Card.Description>
-        <Card.Description fontWeight="semibold">{event.location}</Card.Description>
-
-        <Card.Description fontWeight="thin">Time:</Card.Description>
-        <Card.Description fontWeight="semibold">
-          {new Date(event.startTime).toLocaleString()} - {new Date(event.endTime).toLocaleString()}
-        </Card.Description>
-
-        <Card.Description fontWeight="thin">Categories:</Card.Description>
-        <Card.Description fontWeight="semibold">
-        {getCategoryNames(event.categoryIds, categories).map((categoryName) => (
-          <Badge key={categoryName} variant="solid" mr="1">
-            {categoryName}
-          </Badge>
-        ))}</Card.Description>
-
-        <Card.Description fontWeight="thin">Created by:</Card.Description>
-        <Card.Description fontWeight="semibold">{getCreator(event.createdBy, users)}</Card.Description>
-      </Card.Body>
-      <Card.Footer>
-        <Button mt="2" variant="subtle" onClick={() => window.location.href = `/event/${event.id}`}>
-          Edit Event
-        </Button>
-      </Card.Footer>
-    </Card.Root>
-  );
-}
-
-// Helper: Find creator name
-const getCreator = (id, users) => {
-  const user = users.find((u) => u.id == id);
-  return user ? user.name : "Unknown";
-};
-
-// Helper: convert category IDs → names
-const getCategoryNames = (ids, categories) => {
-  // console.log("ids", ids);
-  const categoryNames = ids
-    .map((cid) => {
-      const categoryName = categories.find((c) => c.id == cid)?.name;
-      return categoryName;
-    }
-    ).filter(Boolean);
-  return categoryNames;
-};

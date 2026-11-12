@@ -23,6 +23,7 @@ const router = createBrowserRouter([
                 element: <EventPage />,
                 // loader: postLoader,
                 // action: addComment,
+                errorElement: <div>Could not load event</div>
             },
         ],
     },
