@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Badge,
   Box,
@@ -18,7 +18,7 @@ import { toaster } from "../components/ui/toaster";
 import { useAppData } from "../context/AppDataContext";
 
 export const EventPage = () => {
-  const { events, users, categories, isLoading, error, updateEvent, removeEvent } = useAppData();
+  const { events, users, categories, isLoading, error, deleteEvent } = useAppData();
   const { eventId } = useParams();
   const navigate = useNavigate();
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -53,20 +53,12 @@ export const EventPage = () => {
     setDeleteError("");
 
     try {
-      const response = await fetch(`http://localhost:3000/events/${event.id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error(`Deleting the event failed (${response.status}).`);
-      }
-
+      await deleteEvent(event.id);
       toaster.create({
         title: "Event deleted",
         description: `${event.title} was deleted successfully.`,
         type: "success",
       });
-      removeEvent(event.id);
       setIsDeleteOpen(false);
       navigate("/", { replace: true });
     } catch (error) {
@@ -115,16 +107,11 @@ export const EventPage = () => {
           </Box>
         </Card.Body>
         <Card.Footer>
-          {/* <Link to="/" style={{ display: "inline-block", marginBottom: "1rem" }}>
-          Back to events
-          </Link> */}
-          <Button onClick={() => navigate("/")} type="button" variant="subtle">
-            Back
-          </Button>
-          <Button onClick={() => setIsEditOpen(true)}>Edit Event</Button>
+          <Button onClick={() => navigate("/")} colorPalette="gray" type="button" variant="subtle">Back</Button>
+          <Button onClick={() => setIsEditOpen(true)} colorPalette="blue" type="button" variant="subtle">Edit</Button>
           <Button
             colorPalette="red"
-            variant="outline"
+            variant="subtle"
             onClick={() => {
               setDeleteError("");
               setIsDeleteOpen(true);
@@ -142,7 +129,6 @@ export const EventPage = () => {
         open={isEditOpen}
         startInEditMode
         onOpenChange={setIsEditOpen}
-        onEventUpdated={updateEvent}
       />
       <Dialog.Root open={isDeleteOpen} onOpenChange={handleDeleteOpenChange}>
         <Portal>

@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
+const API_BASE_URL = "http://localhost:3000";
 const AppDataContext = createContext(null);
 
 export function AppDataProvider({ children }) {
@@ -15,9 +16,9 @@ export function AppDataProvider({ children }) {
     const loadAppData = async () => {
       try {
         const [eventsResponse, usersResponse, categoriesResponse] = await Promise.all([
-          fetch("http://localhost:3000/events"),
-          fetch("http://localhost:3000/users"),
-          fetch("http://localhost:3000/categories"),
+          fetch(`${API_BASE_URL}/events`),
+          fetch(`${API_BASE_URL}/users`),
+          fetch(`${API_BASE_URL}/categories`),
         ]);
 
         if (!eventsResponse.ok || !usersResponse.ok || !categoriesResponse.ok) {
@@ -51,17 +52,49 @@ export function AppDataProvider({ children }) {
     };
   }, []);
 
-  const addEvent = useCallback((event) => {
-    setEvents((currentEvents) => [...currentEvents, event]);
+  const createEvent = useCallback(async (eventData) => {
+    const response = await fetch(`${API_BASE_URL}/events`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(eventData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Creating the event failed (${response.status}).`);
+    }
+
+    const createdEvent = await response.json();
+    setEvents((currentEvents) => [...currentEvents, createdEvent]);
+    return createdEvent;
   }, []);
 
-  const updateEvent = useCallback((updatedEvent) => {
+  const updateEvent = useCallback(async (eventId, eventData) => {
+    const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(eventData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Saving the event failed (${response.status}).`);
+    }
+
+    const updatedEvent = await response.json();
     setEvents((currentEvents) => currentEvents.map((event) => (
       String(event.id) === String(updatedEvent.id) ? updatedEvent : event
     )));
+    return updatedEvent;
   }, []);
 
-  const removeEvent = useCallback((eventId) => {
+  const deleteEvent = useCallback(async (eventId) => {
+    const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Deleting the event failed (${response.status}).`);
+    }
+
     setEvents((currentEvents) => currentEvents.filter((event) => String(event.id) !== String(eventId)));
   }, []);
 
@@ -71,10 +104,10 @@ export function AppDataProvider({ children }) {
     users,
     isLoading,
     error,
-    addEvent,
+    createEvent,
     updateEvent,
-    removeEvent,
-  }), [events, categories, users, isLoading, error, addEvent, updateEvent, removeEvent]);
+    deleteEvent,
+  }), [events, categories, users, isLoading, error, createEvent, updateEvent, deleteEvent]);
 
   return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>;
 }

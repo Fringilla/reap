@@ -21,9 +21,8 @@ export function EventDialog({
   open,
   startInEditMode = false,
   onOpenChange,
-  onEventUpdated,
 }) {
-  const { users } = useAppData();
+  const { users, updateEvent } = useAppData();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
@@ -82,22 +81,12 @@ export function EventDialog({
 
     setIsSaving(true);
     try {
-      const response = await fetch(`http://localhost:3000/events/${event.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          startTime: startTime.toISOString(),
-          endTime: endTime.toISOString(),
-        }),
+      const updatedEvent = await updateEvent(event.id, {
+        ...formData,
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
       });
 
-      if (!response.ok) {
-        throw new Error(`Saving the event failed (${response.status}).`);
-      }
-
-      const updatedEvent = await response.json();
-      onEventUpdated(updatedEvent);
       setFormData(getEditableEvent(updatedEvent));
       setIsEditing(false);
       toaster.create({

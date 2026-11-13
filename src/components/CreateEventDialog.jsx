@@ -25,7 +25,7 @@ const emptyEvent = {
 };
 
 export function CreateEventDialog() {
-  const { categories, users, isLoading, error, addEvent } = useAppData();
+  const { categories, users, isLoading, error, createEvent } = useAppData();
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(emptyEvent);
@@ -72,27 +72,17 @@ export function CreateEventDialog() {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("http://localhost:3000/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: formData.title.trim(),
-          description: formData.description.trim(),
-          image: formData.image.trim(),
-          location: formData.location.trim(),
-          startTime: startTime.toISOString(),
-          endTime: endTime.toISOString(),
-          createdBy: Number(formData.createdBy),
-          categoryIds: formData.categoryIds,
-        }),
+      const createdEvent = await createEvent({
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        image: formData.image.trim(),
+        location: formData.location.trim(),
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
+        createdBy: Number(formData.createdBy),
+        categoryIds: formData.categoryIds,
       });
 
-      if (!response.ok) {
-        throw new Error(`Creating the event failed (${response.status}).`);
-      }
-
-      const createdEvent = await response.json();
-      addEvent(createdEvent);
       handleOpenChange({ open: false });
       resetForm();
       toaster.create({
