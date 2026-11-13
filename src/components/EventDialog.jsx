@@ -59,7 +59,7 @@ export function EventDialog({
     submitEvent.preventDefault();
     setSaveError("");
 
-    const requiredFields = ["title", "description", "image", "location", "startTime", "endTime"];
+    const requiredFields = ["title", "description", "image", "location", "startTime", "endTime", "createdBy"];
     if (requiredFields.some((field) => !String(formData[field]).trim())) {
       setSaveError("Complete all required fields.");
       return;
@@ -235,17 +235,17 @@ export function EventDialog({
                 <Field.Root>
                   <Field.Label>Created by</Field.Label>
                   {isEditing ? (
-                  <select
-                    value={formData.createdBy}
-                    onChange={updateFormField("createdBy")}
-                    required
-                    style={{ width: "100%", padding: "0.5rem", borderRadius: "0.375rem" }}
-                  >
-                    <option value="">Select a creator</option>
-                    {users.map((user) => (
-                      <option key={user.id} value={user.id}>{user.name}</option>
-                    ))}
-                  </select>
+                    <select
+                      value={formData.createdBy}
+                      onChange={updateFormField("createdBy")}
+                      required
+                      style={{ width: "100%", padding: "0.5rem", borderRadius: "0.375rem" }}
+                    >
+                      <option value="">Select a creator</option>
+                      {users.map((user) => (
+                        <option key={user.id} value={user.id}>{user.name}</option>
+                      ))}
+                    </select>
                   ) : (
                     <Input value={creatorName} readOnly />
                   )}
@@ -292,6 +292,7 @@ const getEditableEvent = (event) => ({
   description: event.description ?? "",
   image: event.image ?? "",
   location: event.location ?? "",
+  createdBy: event.createdBy == null ? "" : String(event.createdBy),
   categoryIds: event.categoryIds ?? [],
   startTime: toDateTimeLocal(event.startTime),
   endTime: toDateTimeLocal(event.endTime),
