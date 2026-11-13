@@ -140,6 +140,7 @@ export const EventPage = () => {
         categoryNames={categoryNames}
         creatorName={creatorName}
         open={isEditOpen}
+        startInEditMode
         onOpenChange={setIsEditOpen}
         onEventUpdated={updateEvent}
       />

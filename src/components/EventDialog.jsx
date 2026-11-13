@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -11,6 +11,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { toaster } from "./ui/toaster";
+import { useAppData } from "../context/AppDataContext";
 
 export function EventDialog({
   event,
@@ -18,21 +19,30 @@ export function EventDialog({
   categoryNames,
   creatorName,
   open,
+  startInEditMode = false,
   onOpenChange,
   onEventUpdated,
 }) {
+  const { users } = useAppData();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [formData, setFormData] = useState(() => getEditableEvent(event));
+  const hasInitializedForOpen = useRef(false);
 
   useEffect(() => {
-    if (open) {
-      setFormData(getEditableEvent(event));
-      setSaveError("");
-      setIsEditing(false);
+    if (!open) {
+      hasInitializedForOpen.current = false;
+      return;
     }
-  }, [open, event]);
+
+    setFormData(getEditableEvent(event));
+    setSaveError("");
+    if (!hasInitializedForOpen.current) {
+      setIsEditing(startInEditMode);
+      hasInitializedForOpen.current = true;
+    }
+  }, [open, event, startInEditMode]);
 
   const handleOpenChange = ({ open: isOpen }) => {
     onOpenChange(isOpen);
@@ -224,7 +234,21 @@ export function EventDialog({
                 )}
                 <Field.Root>
                   <Field.Label>Created by</Field.Label>
-                  <Input value={creatorName} readOnly />
+                  {isEditing ? (
+                  <select
+                    value={formData.createdBy}
+                    onChange={updateFormField("createdBy")}
+                    required
+                    style={{ width: "100%", padding: "0.5rem", borderRadius: "0.375rem" }}
+                  >
+                    <option value="">Select a creator</option>
+                    {users.map((user) => (
+                      <option key={user.id} value={user.id}>{user.name}</option>
+                    ))}
+                  </select>
+                  ) : (
+                    <Input value={creatorName} readOnly />
+                  )}
                 </Field.Root>
                 {saveError && <Box role="alert" color="red.500">{saveError}</Box>}
               </Dialog.Body>
@@ -234,21 +258,10 @@ export function EventDialog({
                     <Button type="submit" disabled={isSaving}>
                       {isSaving ? "Saving..." : "Save"}
                     </Button>
-                    <Button
-                      type="button"
-                      variant="subtle"
-                      onClick={() => {
-                        setFormData(getEditableEvent(event));
-                        setSaveError("");
-                        setIsEditing(false);
-                      }}
-                    >
-                      Cancel
-                    </Button>
+                    <Button type="button" variant="subtle" onClick={closeDialog}>Cancel</Button>
                   </>
                 ) : (
                   <>
-                    <Button type="button" variant="subtle" onClick={closeDialog}>Close</Button>
                     <Button
                       type="button"
                       onClick={() => {
@@ -259,6 +272,7 @@ export function EventDialog({
                     >
                       Edit
                     </Button>
+                    <Button type="button" variant="subtle" onClick={closeDialog}>Close</Button>
                   </>
                 )}
               </Dialog.Footer>
