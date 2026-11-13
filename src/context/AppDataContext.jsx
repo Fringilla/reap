@@ -110,6 +110,16 @@ export function AppDataProvider({ children }) {
     users.find((user) => String(user.id) === String(userId))?.name ?? "Unknown"
   ), [users]);
 
+  const getEventTime = useCallback((event) => {
+    const startDate = new Date(event.startTime).toLocaleDateString("nl-NL", 
+      { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+    const startTime = new Date(event.startTime).toLocaleTimeString("nl-NL", 
+      { hour: "2-digit", minute: "2-digit" });
+    const endTime = new Date(event.endTime).toLocaleTimeString("nl-NL", 
+      { hour: "2-digit", minute: "2-digit" });
+    return `${startDate} ${startTime} - ${endTime}`;
+  }, []);
+
   const value = useMemo(() => ({
     events,
     categories,
@@ -121,6 +131,7 @@ export function AppDataProvider({ children }) {
     deleteEvent,
     getCategoryNames,
     getCreatorName,
+    getEventTime,
   }), [
     events,
     categories,
@@ -132,6 +143,7 @@ export function AppDataProvider({ children }) {
     deleteEvent,
     getCategoryNames,
     getCreatorName,
+    getEventTime,
   ]);
 
   return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>;

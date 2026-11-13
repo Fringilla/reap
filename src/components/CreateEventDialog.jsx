@@ -103,6 +103,7 @@ export function CreateEventDialog() {
     <>
       <Button
         type="button"
+        colorPalette="blue"
         variant="subtle"
         disabled={isLoading || Boolean(error)}
         onClick={() => {

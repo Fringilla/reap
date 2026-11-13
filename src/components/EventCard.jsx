@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { useAppData } from "../context/AppDataContext";
 
 export function EventCard({ id, event }) {
-  const { getCategoryNames, getCreatorName } = useAppData();
+  const { getCategoryNames, getCreatorName, getEventTime } = useAppData();
   const categoryNames = getCategoryNames(event.categoryIds);
   const creatorName = getCreatorName(event.createdBy);
+  const eventTime = getEventTime(event);
 
   return (
     <Link
@@ -19,15 +20,13 @@ export function EventCard({ id, event }) {
           <Card.Title color="orange.500">{event.title}</Card.Title>
         </Card.Header>
         <Card.Body gap="2">
-          <Card.Description fontWeight="normal">{event.description}</Card.Description>
+          <Card.Description fontWeight="semibold">{event.description}</Card.Description>
 
           <Card.Description fontWeight="thin">Location:</Card.Description>
           <Card.Description fontWeight="semibold">{event.location}</Card.Description>
 
           <Card.Description fontWeight="thin">Time:</Card.Description>
-          <Card.Description fontWeight="semibold">
-            {new Date(event.startTime).toLocaleString()} - {new Date(event.endTime).toLocaleString()}
-          </Card.Description>
+          <Card.Description fontWeight="semibold">{eventTime}</Card.Description>
 
           <Card.Description fontWeight="thin">Categories:</Card.Description>
           <Card.Description fontWeight="semibold">
