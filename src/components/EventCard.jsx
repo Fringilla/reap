@@ -14,7 +14,7 @@ export function EventCard({ id, event }) {
       style={{ display: "block", color: "inherit", textDecoration: "none" }}
     >
       <Card.Root maxW="sm" overflow="hidden">
-        <Image src={event.image} alt={event.title} w="100%" />
+        <Image src={event.image} alt={event.title} w="100%" h="180px" objectFit="cover" />
         <Card.Header>
           <Card.Title color="orange.500">{event.title}</Card.Title>
         </Card.Header>
