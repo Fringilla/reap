@@ -1,9 +1,11 @@
 import { Badge, Card, Image } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import { useAppData } from "../context/AppDataContext";
 
-export function EventCard({ id, event, users, categories }) {
-  const categoryNames = getCategoryNames(event.categoryIds, categories);
-  const creatorName = getCreator(event.createdBy, users);
+export function EventCard({ id, event }) {
+  const { getCategoryNames, getCreatorName } = useAppData();
+  const categoryNames = getCategoryNames(event.categoryIds);
+  const creatorName = getCreatorName(event.createdBy);
 
   return (
     <Link
@@ -45,21 +47,3 @@ export function EventCard({ id, event, users, categories }) {
     </Link>
   );
 }
-
-// Helper: Find creator name
-const getCreator = (id, users) => {
-  const user = users.find((u) => u.id == id);
-  return user ? user.name : "Unknown";
-};
-
-// Helper: convert category IDs → names
-const getCategoryNames = (ids, categories) => {
-  // console.log("ids", ids);
-  const categoryNames = ids
-    .map((cid) => {
-      const categoryName = categories.find((c) => c.id == cid)?.name;
-      return categoryName;
-    }
-    ).filter(Boolean);
-  return categoryNames;
-};

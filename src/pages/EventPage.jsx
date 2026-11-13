@@ -18,7 +18,14 @@ import { toaster } from "../components/ui/toaster";
 import { useAppData } from "../context/AppDataContext";
 
 export const EventPage = () => {
-  const { events, users, categories, isLoading, error, deleteEvent } = useAppData();
+  const {
+    events,
+    isLoading,
+    error,
+    deleteEvent,
+    getCategoryNames,
+    getCreatorName,
+  } = useAppData();
   const { eventId } = useParams();
   const navigate = useNavigate();
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -38,10 +45,8 @@ export const EventPage = () => {
     return <Text role="alert">Event not found.</Text>;
   }
 
-  const categoryNames = event.categoryIds
-    .map((categoryId) => categories.find((category) => String(category.id) === String(categoryId))?.name)
-    .filter(Boolean);
-  const creatorName = users.find((user) => String(user.id) === String(event.createdBy))?.name ?? "Unknown";
+  const categoryNames = getCategoryNames(event.categoryIds);
+  const creatorName = getCreatorName(event.createdBy);
 
   const handleDeleteOpenChange = ({ open }) => {
     if (isDeleting) return;
@@ -123,9 +128,6 @@ export const EventPage = () => {
       </Card.Root>
       <EventDialog
         event={event}
-        categories={categories}
-        categoryNames={categoryNames}
-        creatorName={creatorName}
         open={isEditOpen}
         startInEditMode
         onOpenChange={setIsEditOpen}

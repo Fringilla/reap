@@ -6,7 +6,7 @@ import { useAppData } from "../context/AppDataContext";
 export const EventsPage = () => <EventsList />;
 
 export const EventsList = () => {
-  const { events, users, categories, isLoading, error } = useAppData();
+  const { events, categories, isLoading, error } = useAppData();
   const [searchText, setSearchText] = useState("");
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
   if (isLoading) {
@@ -95,8 +95,6 @@ export const EventsList = () => {
               key={event.id}
               id={event.id}
               event={event}
-              users={users}
-              categories={categories}
             />
           ))}
         </Box>

@@ -98,6 +98,18 @@ export function AppDataProvider({ children }) {
     setEvents((currentEvents) => currentEvents.filter((event) => String(event.id) !== String(eventId)));
   }, []);
 
+  const getCategoryNames = useCallback((categoryIds) => (
+    (categoryIds ?? [])
+      .map((categoryId) => categories.find(
+        (category) => String(category.id) === String(categoryId),
+      )?.name)
+      .filter(Boolean)
+  ), [categories]);
+
+  const getCreatorName = useCallback((userId) => (
+    users.find((user) => String(user.id) === String(userId))?.name ?? "Unknown"
+  ), [users]);
+
   const value = useMemo(() => ({
     events,
     categories,
@@ -107,7 +119,20 @@ export function AppDataProvider({ children }) {
     createEvent,
     updateEvent,
     deleteEvent,
-  }), [events, categories, users, isLoading, error, createEvent, updateEvent, deleteEvent]);
+    getCategoryNames,
+    getCreatorName,
+  }), [
+    events,
+    categories,
+    users,
+    isLoading,
+    error,
+    createEvent,
+    updateEvent,
+    deleteEvent,
+    getCategoryNames,
+    getCreatorName,
+  ]);
 
   return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>;
 }

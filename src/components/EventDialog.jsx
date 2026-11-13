@@ -15,14 +15,19 @@ import { useAppData } from "../context/AppDataContext";
 
 export function EventDialog({
   event,
-  categories,
-  categoryNames,
-  creatorName,
   open,
   startInEditMode = false,
   onOpenChange,
 }) {
-  const { users, updateEvent } = useAppData();
+  const {
+    categories,
+    users,
+    updateEvent,
+    getCategoryNames,
+    getCreatorName,
+  } = useAppData();
+  const categoryNames = getCategoryNames(event.categoryIds);
+  const creatorName = getCreatorName(event.createdBy);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
