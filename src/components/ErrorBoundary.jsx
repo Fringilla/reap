@@ -16,9 +16,13 @@ export default class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      return <p style={{ color: "red" }}>{this.state.error.message}</p>;
+      const message = this.state.error instanceof Error
+        ? this.state.error.message
+        : "An unexpected error occurred.";
+
+      return <p role="alert" style={{ color: "red" }}>{message}</p>;
     }
-    
+
     return this.props.children;
   }
 }
