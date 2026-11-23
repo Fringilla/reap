@@ -19,12 +19,13 @@
   "events": [
     {
       "id": "1",
-      "createdBy": "1",
+      "createdBy": 1,
       "title": "Trampoline party",
       "description": "Bounce around with your friends",
       "image": "https://i.pinimg.com/736x/3d/2f/af/3d2faf4e3188d34a9fcdc00df59e77b0.jpg",
       "categoryIds": [
-        "2"
+        "2",
+        "3"
       ],
       "location": "My back yard",
       "startTime": "2023-03-10T18:00:00.000Z",
@@ -134,6 +135,19 @@
       "location": "Downtown Bowling Alley",
       "startTime": "2023-03-19T18:00:00.000Z",
       "endTime": "2023-03-19T21:00:00.000Z"
+    },
+    {
+      "title": "My birthday",
+      "description": "It's my birthday!",
+      "image": "",
+      "location": "home",
+      "startTime": "2026-12-31T23:00:00.000Z",
+      "endTime": "2027-01-01T22:00:00.000Z",
+      "createdBy": "1",
+      "categoryIds": [
+        "2"
+      ],
+      "id": "XLGplgSfNz0"
     }
   ],
   "categories": [
@@ -149,5 +163,6 @@
       "name": "relaxation",
       "id": "3"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

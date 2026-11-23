@@ -22,6 +22,8 @@ Beste Patrick,
 
     Zodra je de data opslaat en opnieuw inlaadt zal React opnieuw een render uitvoeren. Dit is echter alleen van toepassing zodra de waarde van de data veranderd.
 
+    > Ik heb gekozen om
+
 - [ ] Daarnaast wordt de afbeelding na het aanpassen en opslaan nog niet direct bijgewerkt.
 
     Je kunt dit oplossen door een key={event.image} mee te geven aan de afbeelding in de EventCard en de EventPage.

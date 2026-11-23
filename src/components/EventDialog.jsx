@@ -92,7 +92,7 @@ export function EventDialog({
     }
     setIsSubmitting(true);
     try {
-      const createdEvent = await createEvent({
+      const updatedEvent = await updateEvent(event.id, {
         title: formData.title.trim(),
         description: formData.description.trim(),
         image: formData.image.trim(),
@@ -104,16 +104,16 @@ export function EventDialog({
       });
 
       handleOpenChange({ open: false });
-      resetForm();
+      // No resetForm();
       toaster.create({
-        title: "Event created",
-        description: `${createdEvent.title} was added successfully.`,
+        title: "Event updated",
+        description: `${updatedEvent.title} was updated successfully.`,
         type: "success",
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Could not create the event.";
+      const message = error instanceof Error ? error.message : "Could not update the event.";
       setFormError(message);
-      toaster.create({ title: "Could not create event", description: message, type: "error" });
+      toaster.create({ title: "Could not update event", description: message, type: "error" });
     } finally {
       setIsSubmitting(false);
     }
