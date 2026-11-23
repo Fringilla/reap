@@ -216,10 +216,10 @@ export function CreateEventDialog() {
                   {formError && <Box role="alert" color="red.500" mt="3">{formError}</Box>}
                 </Dialog.Body>
                 <Dialog.Footer flexShrink="0">
-                  <Button type="submit" disabled={isLoading || Boolean(error) || isSubmitting}>
-                    {isSubmitting ? "Creating..." : "Create event"}
+                  <Button type="submit" colorPalette="blue" variant="subtle" disabled={isLoading || Boolean(error) || isSubmitting}>
+                    {isSubmitting ? "Creating..." : "Create Event"}
                   </Button>
-                  <Button type="button" variant="subtle" onClick={() => handleOpenChange({ open: false })}>
+                  <Button type="button" colorPalette="gray" variant="subtle" onClick={() => handleOpenChange({ open: false })}>
                     Cancel
                   </Button>
                 </Dialog.Footer>
