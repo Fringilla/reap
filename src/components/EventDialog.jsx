@@ -29,7 +29,7 @@ export function EventDialog({
   const categoryNames = getCategoryNames(event.categoryIds);
   const creatorName = getCreatorName(event.createdBy);
   const [isEditing, setIsEditing] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
   const [formData, setFormData] = useState(() => getEditableEvent(event));
   const hasInitializedForOpen = useRef(false);
@@ -56,59 +56,69 @@ export function EventDialog({
       setIsEditing(false);
     }
   };
+
   const updateFormField = (field) => (changeEvent) => {
     setFormData((previous) => ({ ...previous, [field]: changeEvent.target.value }));
   };
+
   const handleSubmit = async (submitEvent) => {
     submitEvent.preventDefault();
     setFormError("");
 
+    var errors = [];
     if (formData.categoryIds.length === 0) {
-      setFormError("Select at least one category.");
-      return;
+      errors.push("Select at least one category.");
     }
 
     const startTime = new Date(formData.startTime);
     const endTime = new Date(formData.endTime);
     if (Number.isNaN(startTime.getTime()) || Number.isNaN(endTime.getTime())) {
-      setFormError("Enter valid start and end times.");
-      return;
+      errors.push("Enter valid start and end times.");
     }
     if (endTime <= startTime) {
-      setFormError("End time must be after start time.");
-      return;
+      errors.push("End time must be after start time.");
     }
 
     const requiredFields = ["title", "description", "location", "startTime", "endTime", "createdBy"];
     if (requiredFields.some((field) => !String(formData[field]).trim())) {
-      setFormError("Complete all required fields.");
-      return;
+      errors.push("Complete all required fields.");
     }
 
-    setIsSaving(true);
+    if (errors.length > 0) {
+      setFormError(errors.map((error, index) => (
+        <Box key={index} role="alert" color="red.500" mt="3">- {error}</Box>
+      )));
+      return;
+    }
+    setIsSubmitting(true);
     try {
-      const updatedEvent = await updateEvent(event.id, {
-        ...formData,
+      const createdEvent = await createEvent({
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        image: formData.image.trim(),
+        location: formData.location.trim(),
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
+        createdBy: Number(formData.createdBy),
+        categoryIds: formData.categoryIds,
       });
 
-      setFormData(getEditableEvent(updatedEvent));
-      setIsEditing(false);
+      handleOpenChange({ open: false });
+      resetForm();
       toaster.create({
-        title: "Event updated",
-        description: `${updatedEvent.title} was updated successfully.`,
+        title: "Event created",
+        description: `${createdEvent.title} was added successfully.`,
         type: "success",
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Could not save the event.";
+      const message = error instanceof Error ? error.message : "Could not create the event.";
       setFormError(message);
-      toaster.create({ title: "Could not update event", description: message, type: "error" });
+      toaster.create({ title: "Could not create event", description: message, type: "error" });
     } finally {
-      setIsSaving(false);
-      onOpenChange(false);
+      setIsSubmitting(false);
     }
   };
+
   const closeDialog = () => {
     onOpenChange(false);
     setFormData(getEditableEvent(event));
@@ -244,8 +254,8 @@ export function EventDialog({
               <Dialog.Footer flexShrink="0">
                 {isEditing ? (
                   <>
-                    <Button type="submit" disabled={isSaving} colorPalette="blue" variant="subtle">
-                      {isSaving ? "Saving..." : "Save"}
+                    <Button type="submit" disabled={isSubmitting} colorPalette="blue" variant="subtle">
+                      {isSubmitting ? "Saving..." : "Save"}
                     </Button>
                     <Button type="button" colorPalette="gray" variant="subtle" onClick={closeDialog}>Cancel</Button>
                   </>
