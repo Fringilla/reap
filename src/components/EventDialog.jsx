@@ -30,7 +30,7 @@ export function EventDialog({
   const creatorName = getCreatorName(event.createdBy);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [saveError, setSaveError] = useState("");
+  const [formError, setFormError] = useState("");
   const [formData, setFormData] = useState(() => getEditableEvent(event));
   const hasInitializedForOpen = useRef(false);
 
@@ -41,7 +41,7 @@ export function EventDialog({
     }
 
     setFormData(getEditableEvent(event));
-    setSaveError("");
+    setFormError("");
     if (!hasInitializedForOpen.current) {
       setIsEditing(startInEditMode);
       hasInitializedForOpen.current = true;
@@ -52,35 +52,36 @@ export function EventDialog({
     onOpenChange(isOpen);
     if (!isOpen) {
       setFormData(getEditableEvent(event));
-      setSaveError("");
+      setFormError("");
       setIsEditing(false);
     }
   };
   const updateFormField = (field) => (changeEvent) => {
     setFormData((previous) => ({ ...previous, [field]: changeEvent.target.value }));
   };
-  const handleSave = async (submitEvent) => {
+  const handleSubmit = async (submitEvent) => {
     submitEvent.preventDefault();
-    setSaveError("");
+    setFormError("");
 
-    const requiredFields = ["title", "description", "image", "location", "startTime", "endTime", "createdBy"];
-    if (requiredFields.some((field) => !String(formData[field]).trim())) {
-      setSaveError("Complete all required fields.");
-      return;
-    }
     if (formData.categoryIds.length === 0) {
-      setSaveError("Select at least one category.");
+      setFormError("Select at least one category.");
       return;
     }
 
     const startTime = new Date(formData.startTime);
     const endTime = new Date(formData.endTime);
     if (Number.isNaN(startTime.getTime()) || Number.isNaN(endTime.getTime())) {
-      setSaveError("Enter valid start and end times.");
+      setFormError("Enter valid start and end times.");
       return;
     }
     if (endTime <= startTime) {
-      setSaveError("End time must be after start time.");
+      setFormError("End time must be after start time.");
+      return;
+    }
+
+    const requiredFields = ["title", "description", "location", "startTime", "endTime", "createdBy"];
+    if (requiredFields.some((field) => !String(formData[field]).trim())) {
+      setFormError("Complete all required fields.");
       return;
     }
 
@@ -101,7 +102,7 @@ export function EventDialog({
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Could not save the event.";
-      setSaveError(message);
+      setFormError(message);
       toaster.create({ title: "Could not update event", description: message, type: "error" });
     } finally {
       setIsSaving(false);
@@ -111,7 +112,7 @@ export function EventDialog({
   const closeDialog = () => {
     onOpenChange(false);
     setFormData(getEditableEvent(event));
-    setSaveError("");
+    setFormError("");
     setIsEditing(false);
   };
 
@@ -129,7 +130,7 @@ export function EventDialog({
             <Dialog.Header>
               <Dialog.Title>{isEditing ? formData.title : event.title}</Dialog.Title>
             </Dialog.Header>
-            <Box as="form" display="flex" flexDirection="column" flex="1" minH="0" gap="4" onSubmit={handleSave} noValidate>
+            <Box as="form" display="flex" flexDirection="column" flex="1" minH="0" gap="4" onSubmit={handleSubmit} noValidate>
               <Dialog.Body flex="1" minH="0" overflowY="auto">
                 <Field.Root>
                   <Field.Label>Title</Field.Label>
@@ -238,20 +239,19 @@ export function EventDialog({
                     <Input value={creatorName} readOnly />
                   )}
                 </Field.Root>
-                {saveError && <Box role="alert" color="red.500">{saveError}</Box>}
+                {formError && <Box role="alert" color="red.500">{formError}</Box>}
               </Dialog.Body>
               <Dialog.Footer flexShrink="0">
                 {isEditing ? (
                   <>
-                    <Button type="submit" disabled={isSaving}>
+                    <Button type="submit" disabled={isSaving} colorPalette="blue" variant="subtle">
                       {isSaving ? "Saving..." : "Save"}
                     </Button>
-                    <Button type="button" variant="subtle" onClick={closeDialog}>Cancel</Button>
+                    <Button type="button" colorPalette="gray" variant="subtle" onClick={closeDialog}>Cancel</Button>
                   </>
                 ) : (
                   <>
-                    <Button
-                      type="button"
+                    <Button type="button" colorPalette="blue" variant="subtle"
                       onClick={() => {
                         setFormData(getEditableEvent(event));
                         setSaveError("");
@@ -260,7 +260,7 @@ export function EventDialog({
                     >
                       Edit
                     </Button>
-                    <Button type="button" variant="subtle" onClick={closeDialog}>Close</Button>
+                    <Button type="button" colorPalette="gray" variant="subtle" onClick={closeDialog}>Close</Button>
                   </>
                 )}
               </Dialog.Footer>

@@ -31,45 +31,58 @@ export function CreateEventDialog() {
   const [formData, setFormData] = useState(emptyEvent);
   const [formError, setFormError] = useState("");
 
+  const handleOpenChange = ({ open }) => {
+    setIsOpen(open);
+    if (!open) resetForm();
+  };
+
   const updateFormField = (field) => (changeEvent) => {
     setFormData((previous) => ({ ...previous, [field]: changeEvent.target.value }));
   };
 
   const resetForm = () => {
-    setFormData(emptyEvent);
+    var today = new Date();
+    var yy = today.getFullYear();
+    var mm = today.getMonth();
+    var dd = today.getDate();
+    var hh = 7;
+    var startTime = new Date(yy, mm, dd, hh);
+    var endTime = new Date(yy, mm, dd, hh + 1);
+    emptyEvent.startTime = startTime.toISOString().slice(0, 16);
+    emptyEvent.endTime = endTime.toISOString().slice(0, 16);
+    setFormData({ ...emptyEvent });
     setFormError("");
-  };
-
-  const handleOpenChange = ({ open }) => {
-    setIsOpen(open);
-    if (!open) resetForm();
   };
 
   const handleSubmit = async (submitEvent) => {
     submitEvent.preventDefault();
     setFormError("");
 
-    const requiredFields = ["title", "description", "image", "location", "startTime", "endTime", "createdBy"];
-    if (requiredFields.some((field) => !String(formData[field]).trim())) {
-      setFormError("Complete all required fields.");
-      return;
-    }
+    var errors = [];
     if (formData.categoryIds.length === 0) {
-      setFormError("Select at least one category.");
-      return;
+      errors.push("Select at least one category.");
     }
 
     const startTime = new Date(formData.startTime);
     const endTime = new Date(formData.endTime);
     if (Number.isNaN(startTime.getTime()) || Number.isNaN(endTime.getTime())) {
-      setFormError("Enter valid start and end times.");
-      return;
+      errors.push("Enter valid start and end times.");
     }
     if (endTime <= startTime) {
-      setFormError("End time must be after start time.");
-      return;
+      errors.push("End time must be after start time.");
     }
 
+    const requiredFields = ["title", "description", "location", "startTime", "endTime", "createdBy"];
+    if (requiredFields.some((field) => !String(formData[field]).trim())) {
+      errors.push("Complete all required fields.");
+    }
+
+    if (errors.length > 0) {
+      setFormError(errors.map((error, index) => (
+        <Box key={index} role="alert" color="red.500" mt="3">- {error}</Box>
+      )));
+      return;
+    }
     setIsSubmitting(true);
     try {
       const createdEvent = await createEvent({
@@ -101,11 +114,7 @@ export function CreateEventDialog() {
 
   return (
     <>
-      <Button
-        type="button"
-        colorPalette="blue"
-        variant="subtle"
-        disabled={isLoading || Boolean(error)}
+      <Button type="button" colorPalette="blue" variant="subtle" disabled={isLoading || Boolean(error)}
         onClick={() => {
           resetForm();
           setIsOpen(true);
@@ -139,7 +148,7 @@ export function CreateEventDialog() {
                       </Field.Root>
                       <Field.Root>
                         <Field.Label>Image URL</Field.Label>
-                        <Input type="url" value={formData.image} onChange={updateFormField("image")} required />
+                        <Input type="url" value={formData.image} onChange={updateFormField("image")} />
                       </Field.Root>
                       <Field.Root>
                         <Field.Label>Location</Field.Label>
@@ -179,14 +188,7 @@ export function CreateEventDialog() {
                           ))}
                         </select>
                       </Field.Root>
-                      <Box
-                        as="fieldset"
-                        border="0"
-                        p="0"
-                        m="0"
-                        minW="0"
-                        aria-required="true"
-                      >
+                      <Box as="fieldset" border="0" p="0" m="0" minW="0" aria-required="true">
                         <Box as="legend" fontWeight="medium" mb="2">
                           Categories (select at least one)
                         </Box>
