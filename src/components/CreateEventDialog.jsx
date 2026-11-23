@@ -121,7 +121,7 @@ export function CreateEventDialog() {
               <Dialog.Header>
                 <Dialog.Title>Add an event</Dialog.Title>
               </Dialog.Header>
-              <Box as="form" display="flex" flexDirection="column" flex="1" minH="0" gap="4" onSubmit={handleSubmit}>
+              <Box as="form" display="flex" flexDirection="column" flex="1" minH="0" gap="4" onSubmit={handleSubmit} noValidate>
                 <Dialog.Body flex="1" minH="0" overflowY="auto">
                   {isLoading ? (
                     <Box role="status">Loading form options...</Box>
