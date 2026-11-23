@@ -11,13 +11,17 @@ export const EventsList = () => {
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
   if (isLoading) {
     return (
-      <Box>
-        <Heading mb="4">List of events</Heading>
-        <Box display="grid" gridTemplateColumns="repeat(auto-fill, minmax(280px, 1fr))" gap="4">
-          {[0, 1, 2, 3].map((placeholder) => (
-            <Skeleton key={placeholder} height="320px" borderRadius="md" />
-          ))}
-        </Box>
+      <Box
+        display="grid" 
+        gridTemplateColumns="repeat(auto-fill, minmax(min(100%, 350px), 1fr))"
+        gap="4"
+        justifyItems="center">
+        <Heading mb="4">Loading events...</Heading>
+
+        {[0, 1, 2, 3].map((placeholder) => (
+          <Skeleton key={placeholder} w="320px" h="615px" borderRadius="md" boxShadow="md" />
+        ))}
+
       </Box>
     );
   }
@@ -88,8 +92,8 @@ export const EventsList = () => {
           display="grid"
           gridTemplateColumns="repeat(auto-fill, minmax(min(100%, 350px), 1fr))"
           gap="4"
-          justifyItems="center"
-        >
+          justifyItems="center">
+
           {filteredEvents.map((event) => (
             <EventCard
               key={event.id}
@@ -97,6 +101,7 @@ export const EventsList = () => {
               event={event}
             />
           ))}
+
         </Box>
       ) : (
         <Text role="status">No events match your search and selected categories.</Text>

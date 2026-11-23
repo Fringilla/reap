@@ -34,7 +34,7 @@ export const EventPage = () => {
   const [deleteError, setDeleteError] = useState("");
 
   if (isLoading) {
-    return <Skeleton height="400px" m="8" borderRadius="md" />;
+    return <Skeleton maxW="4xl" mx="auto" p={{ base: "4", md: "8" }} />;
   }
   if (error) {
     return <Text role="alert">Could not load event details: {error}</Text>;

@@ -14,7 +14,7 @@ export function EventCard({ id, event }) {
       aria-label={`View details for ${event.title}`}
       style={{ display: "block", color: "inherit", textDecoration: "none" }}
     >
-      <Card.Root w="320px" overflow="hidden">
+      <Card.Root w="320px" overflow="hidden" borderRadius="md" boxShadow="md">
         <Image src={event.image} alt={event.title} w="320px" h="180px" objectFit="cover" />
         <Card.Header>
           <Card.Title color="orange.500">{event.title}</Card.Title>
