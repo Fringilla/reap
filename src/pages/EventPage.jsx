@@ -112,17 +112,21 @@ export const EventPage = () => {
           </Box>
         </Card.Body>
         <Card.Footer>
-          <Button onClick={() => navigate("/")} colorPalette="gray" type="button" variant="subtle">Back</Button>
-          <Button onClick={() => setIsEditOpen(true)} colorPalette="blue" type="button" variant="subtle">Edit</Button>
-          <Button
-            colorPalette="red"
-            variant="subtle"
+          <Button type="button" colorPalette="gray" variant="subtle" 
+            onClick={() => 
+              navigate("/")
+            }>Back
+          </Button>
+          <Button type="button" colorPalette="blue" variant="subtle"
+            onClick={() => 
+              setIsEditOpen(true)
+            }>Edit
+          </Button>
+          <Button colorPalette="red" variant="subtle"
             onClick={() => {
               setDeleteError("");
               setIsDeleteOpen(true);
-            }}
-          >
-            Delete Event
+            }}>Delete Event
           </Button>
         </Card.Footer>
       </Card.Root>

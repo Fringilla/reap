@@ -110,12 +110,13 @@ export function AppDataProvider({ children }) {
     users.find((user) => String(user.id) === String(userId))?.name ?? "Unknown"
   ), [users]);
 
+  const locale = "en-GB"; // locale for date formatting
   const getEventTime = useCallback((event) => {
-    const startDate = new Date(event.startTime).toLocaleDateString("nl-NL", 
+    const startDate = new Date(event.startTime).toLocaleDateString(locale, 
       { weekday: "short", day: "numeric", month: "short", year: "numeric" });
-    const startTime = new Date(event.startTime).toLocaleTimeString("nl-NL", 
+    const startTime = new Date(event.startTime).toLocaleTimeString(locale, 
       { hour: "2-digit", minute: "2-digit" });
-    const endTime = new Date(event.endTime).toLocaleTimeString("nl-NL", 
+    const endTime = new Date(event.endTime).toLocaleTimeString(locale, 
       { hour: "2-digit", minute: "2-digit" });
     return `${startDate} ${startTime} - ${endTime}`;
   }, []);
