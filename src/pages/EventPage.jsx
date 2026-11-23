@@ -122,7 +122,7 @@ export const EventPage = () => {
               setIsEditOpen(true)
             }>Edit
           </Button>
-          <Button colorPalette="red" variant="subtle"
+          <Button colorPalette="red" variant="subtle" 
             onClick={() => {
               setDeleteError("");
               setIsDeleteOpen(true);
@@ -151,6 +151,7 @@ export const EventPage = () => {
               <Dialog.Footer>
                 <Button
                   type="button"
+                  colorPalette="gray"
                   variant="subtle"
                   disabled={isDeleting}
                   onClick={() => handleDeleteOpenChange({ open: false })}
@@ -160,6 +161,7 @@ export const EventPage = () => {
                 <Button
                   type="button"
                   colorPalette="red"
+                  variant="subtle"
                   disabled={isDeleting}
                   onClick={handleDelete}
                 >

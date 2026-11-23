@@ -105,6 +105,7 @@ export function EventDialog({
       toaster.create({ title: "Could not update event", description: message, type: "error" });
     } finally {
       setIsSaving(false);
+      onOpenChange(false);
     }
   };
   const closeDialog = () => {
@@ -128,7 +129,7 @@ export function EventDialog({
             <Dialog.Header>
               <Dialog.Title>{isEditing ? formData.title : event.title}</Dialog.Title>
             </Dialog.Header>
-            <Box as="form" display="flex" flexDirection="column" flex="1" minH="0" gap="4" onSubmit={handleSave}>
+            <Box as="form" display="flex" flexDirection="column" flex="1" minH="0" gap="4" onSubmit={handleSave} noValidate>
               <Dialog.Body flex="1" minH="0" overflowY="auto">
                 <Field.Root>
                   <Field.Label>Title</Field.Label>
@@ -189,15 +190,8 @@ export function EventDialog({
                     required={isEditing}
                   />
                 </Field.Root>
-                {isEditing ? (
-                  <Box
-                    as="fieldset"
-                    border="0"
-                    p="0"
-                    m="0"
-                    minW="0"
-                    aria-required="true"
-                  >
+                {true || isEditing ? (
+                  <Box as="fieldset" border="0" p="0" m="0" minW="0" aria-required="true">
                     <Box as="legend" fontWeight="medium" mb="2">Categories</Box>
                     <Box display="flex" flexWrap="wrap" gap="3">
                       {categories.map((category) => (
