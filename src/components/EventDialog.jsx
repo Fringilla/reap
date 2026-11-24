@@ -9,6 +9,7 @@ import {
   Field,
   Input,
   Portal,
+  Skeleton, SkeletonText,
   Textarea,
 } from "@chakra-ui/react";
 import { toaster } from "./ui/toaster";
@@ -92,6 +93,7 @@ export function EventDialog({
       )));
       return;
     }
+    
     setIsSubmitting(true);
     try {
       const updatedEvent = await updateEvent(event.id, {
@@ -111,7 +113,7 @@ export function EventDialog({
         type: "success",
       });
 
-      navigate("/", { replace: true });
+      closeDialog();
 
     } catch (error) {
       const message = error instanceof Error ? error.message : "Could not update the event.";

@@ -15,8 +15,12 @@ export const EventsPage = () => {
         {/* <Heading mb="4">Loading events...</Heading> */}
         <EventSearchFilters
           searchText={searchText}
-          categories= {[ { id: 1, name: "sports" }, { id: 2, name: "games" }, { id: 3, name: "relaxation" } ]}
-          selectedCategoryIds={[ { id: 1 }, { id: 2 }, { id: 3 } ]}
+          categories= {[
+             { id: 1, name: "sports" }, 
+             { id: 2, name: "games" }, 
+             { id: 3, name: "relaxation" }
+          ]}
+          selectedCategoryIds={[]}
           isLoading={true}
         />
         <Box
@@ -71,8 +75,8 @@ export const EventsPage = () => {
       {filteredEvents.length > 0 ? (
         <Box
           display="grid"
-          gridTemplateColumns="repeat(auto-fill, minmax(min(100%, 350px), 1fr))"
-          gap="4"
+          gridTemplateColumns="repeat(auto-fill, minmax(min(100%, 400px), 1fr))"
+          gap="2"
           justifyItems="center">
 
           {filteredEvents.map((event) => (

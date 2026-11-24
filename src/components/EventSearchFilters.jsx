@@ -7,37 +7,41 @@ export const EventSearchFilters = ({
   onSearchTextChange,
   onToggleCategory,
   onClearFilters,
-  isLoading,
+  isLoading = false,
 }) => (
   <Box mb="6" display="grid" gap="4">
     <Field.Root>
       <Field.Label>Search events by title</Field.Label>
-      <Input
-        type="search"
-        value={searchText}
-        onChange={(changeEvent) => onSearchTextChange(changeEvent.target.value)}
-        placeholder="Search events"
-      />
+      <Skeleton loading={isLoading} w="full">
+        <Input type="search" placeholder="Search events" value={searchText} disabled={isLoading}
+          onChange={(changeEvent) => 
+            onSearchTextChange(changeEvent.target.value)
+          }
+        />
+      </Skeleton>
     </Field.Root>
+
     <Box as="fieldset">
       <Text as="legend" fontWeight="semibold" mb="2">Filter by category</Text>
       <Box display="flex" flexWrap="wrap" gap="4">
         {categories.map((category) => (
           <Checkbox.Root
             key={category.id}
+            disabled={isLoading}
             checked={selectedCategoryIds.includes(String(category.id))}
             onCheckedChange={({ checked }) => onToggleCategory(category.id, checked)}
           >
             <Checkbox.HiddenInput />
             <Checkbox.Control />
             {isLoading 
-              ? (<Skeleton width={category.name.length * 2} height="1rem" />) 
+              ? (<Skeleton width={category.name.length * 1}rem height="1rem" />) 
               : (<Checkbox.Label>{category.name}</Checkbox.Label>)
             }
           </Checkbox.Root>
         ))}
       </Box>
     </Box>
+
     <Button
       type="button"
       variant="subtle"

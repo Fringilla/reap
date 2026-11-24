@@ -11,6 +11,7 @@ import {
   Image,
   Portal,
   Skeleton,
+  SkeletonText,
   Text,
 } from "@chakra-ui/react";
 import { EventDialog } from "../components/EventDialog";
@@ -34,7 +35,12 @@ export const EventPage = () => {
   const [deleteError, setDeleteError] = useState("");
 
   if (isLoading) {
-    return <Skeleton maxW="4xl" mx="auto" p={{ base: "4", md: "8" }} />;
+    return (
+      <Skeleton loading={isLoading} maxW="4xl" mx="auto" p={{ base: "4", md: "8" }}>
+        <Skeleton width={400} height={200} />
+        <SkeletonText loading={isLoading} width={200} noOfLines={12} />
+      </Skeleton>
+    );
   }
 
   if (error) {
@@ -46,14 +52,12 @@ export const EventPage = () => {
     return <Text role="alert">Event not found.</Text>;
   }
 
-  const categoryNames = getCategoryNames(event.categoryIds);
-  const creatorName = getCreatorName(event.createdBy);
-
   const handleDeleteOpenChange = ({ open }) => {
     if (isDeleting) return;
     setIsDeleteOpen(open);
     if (!open) setDeleteError("");
   };
+
   const handleDelete = async () => {
     setIsDeleting(true);
     setDeleteError("");
@@ -75,6 +79,9 @@ export const EventPage = () => {
       setIsDeleting(false);
     }
   };
+
+  const categoryNames = getCategoryNames(event.categoryIds);
+  const creatorName = getCreatorName(event.createdBy);
 
   return (
     <Box maxW="4xl" mx="auto" p={{ base: "4", md: "8" }}>
