@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Field, Input, Text } from "@chakra-ui/react";
+import { Box, Button, Checkbox, Field, Input, Skeleton, Text } from "@chakra-ui/react";
 
 export const EventSearchFilters = ({
   searchText,
@@ -7,6 +7,7 @@ export const EventSearchFilters = ({
   onSearchTextChange,
   onToggleCategory,
   onClearFilters,
+  isLoading,
 }) => (
   <Box mb="6" display="grid" gap="4">
     <Field.Root>
@@ -29,7 +30,10 @@ export const EventSearchFilters = ({
           >
             <Checkbox.HiddenInput />
             <Checkbox.Control />
-            <Checkbox.Label>{category.name}</Checkbox.Label>
+            {isLoading 
+              ? (<Skeleton width={category.name.length * 2} height="1rem" />) 
+              : (<Checkbox.Label>{category.name}</Checkbox.Label>)
+            }
           </Checkbox.Root>
         ))}
       </Box>

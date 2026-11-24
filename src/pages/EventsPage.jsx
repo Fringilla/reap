@@ -17,6 +17,7 @@ export const EventsPage = () => {
           searchText={searchText}
           categories= {[ { id: 1, name: "sports" }, { id: 2, name: "games" }, { id: 3, name: "relaxation" } ]}
           selectedCategoryIds={[ { id: 1 }, { id: 2 }, { id: 3 } ]}
+          isLoading={true}
         />
         <Box
           display="grid" 
