@@ -36,6 +36,7 @@ export const EventPage = () => {
   if (isLoading) {
     return <Skeleton maxW="4xl" mx="auto" p={{ base: "4", md: "8" }} />;
   }
+
   if (error) {
     return <Text role="alert">Could not load event details: {error}</Text>;
   }
@@ -112,30 +113,32 @@ export const EventPage = () => {
           </Box>
         </Card.Body>
         <Card.Footer>
-          <Button type="button" colorPalette="gray" variant="subtle" 
-            onClick={() => 
-              navigate("/")
-            }>Back
-          </Button>
           <Button type="button" colorPalette="blue" variant="subtle"
             onClick={() => 
               setIsEditOpen(true)
             }>Edit
           </Button>
-          <Button colorPalette="red" variant="subtle" 
+          <Button type="button" colorPalette="red" variant="subtle" 
             onClick={() => {
               setDeleteError("");
               setIsDeleteOpen(true);
             }}>Delete Event
           </Button>
+          <Button type="button" colorPalette="gray" variant="subtle"
+            onClick={() => 
+              navigate("/")
+            }>Close
+          </Button>
         </Card.Footer>
       </Card.Root>
+
       <EventDialog
         event={event}
         open={isEditOpen}
         startInEditMode
         onOpenChange={setIsEditOpen}
       />
+
       <Dialog.Root open={isDeleteOpen} onOpenChange={handleDeleteOpenChange}>
         <Portal>
           <Dialog.Backdrop />

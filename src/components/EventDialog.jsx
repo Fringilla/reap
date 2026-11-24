@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router";
 import {
   Box,
   Button,
@@ -26,6 +27,7 @@ export function EventDialog({
     getCategoryNames,
     getCreatorName,
   } = useAppData();
+  const navigate = useNavigate();
   const categoryNames = getCategoryNames(event.categoryIds);
   const creatorName = getCreatorName(event.createdBy);
   const [isEditing, setIsEditing] = useState(false);
@@ -103,17 +105,19 @@ export function EventDialog({
         categoryIds: formData.categoryIds,
       });
 
-      handleOpenChange({ open: false });
-      // No resetForm();
       toaster.create({
         title: "Event updated",
         description: `${updatedEvent.title} was updated successfully.`,
         type: "success",
       });
+
+      navigate("/", { replace: true });
+
     } catch (error) {
       const message = error instanceof Error ? error.message : "Could not update the event.";
       setFormError(message);
       toaster.create({ title: "Could not update event", description: message, type: "error" });
+
     } finally {
       setIsSubmitting(false);
     }

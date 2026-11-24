@@ -24,8 +24,7 @@
       "description": "Bounce around with your friends",
       "image": "https://i.pinimg.com/736x/3d/2f/af/3d2faf4e3188d34a9fcdc00df59e77b0.jpg",
       "categoryIds": [
-        "2",
-        "3"
+        "2"
       ],
       "location": "My back yard",
       "startTime": "2023-03-10T18:00:00.000Z",
@@ -33,7 +32,7 @@
     },
     {
       "id": "2",
-      "createdBy": "1",
+      "createdBy": 1,
       "title": "Laser Tag mania",
       "description": "Let's play laser tag!",
       "image": "https://wincacademy.github.io/webpages/media/lasertag.jpg",
@@ -139,13 +138,14 @@
     {
       "title": "My birthday",
       "description": "It's my birthday!",
-      "image": "",
+      "image": "https://cdn.pixabay.com/photo/2016/11/18/15/46/birthday-1835443_640.jpg",
       "location": "home",
       "startTime": "2026-12-31T23:00:00.000Z",
       "endTime": "2027-01-01T22:00:00.000Z",
-      "createdBy": "1",
+      "createdBy": 1,
       "categoryIds": [
-        "2"
+        "2",
+        "3"
       ],
       "id": "XLGplgSfNz0"
     }
