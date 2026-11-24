@@ -1,8 +1,8 @@
 import { Box, Button, Checkbox, Field, Input, Text } from "@chakra-ui/react";
 
 export const EventSearchFilters = ({
-  categories,
   searchText,
+  categories,
   selectedCategoryIds,
   onSearchTextChange,
   onToggleCategory,

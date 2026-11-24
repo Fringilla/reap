@@ -14,9 +14,9 @@ export const EventsPage = () => {
       <Box p={{ base: "4", md: "6" }}>
         {/* <Heading mb="4">Loading events...</Heading> */}
         <EventSearchFilters
-          categories={categories}
           searchText={searchText}
-          selectedCategoryIds={selectedCategoryIds}
+          categories= {[ { id: 1, name: "sports" }, { id: 2, name: "games" }, { id: 3, name: "relaxation" } ]}
+          selectedCategoryIds={[ { id: 1 }, { id: 2 }, { id: 3 } ]}
         />
         <Box
           display="grid" 
