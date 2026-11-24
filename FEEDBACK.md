@@ -16,7 +16,9 @@ Beste Patrick,
 
     > De breedte overgenomen van EventCard voor de placeholders tijdens laden.
     >
-    > - [ ] Ik zou van het filter gedeelte een component kunnen maken en deze er ook bij plaatsen
+    > - [x] Filter gedeelte een apart component
+    > - [x] Filter ook in het skeleton gezet
+    > - [x] Iiteindelijke vorm beter nagebouwd
 
 - [x] Het zou beter zijn als alle cards dezelfde breedte hebben. Nu is de card breedte afhankelijk van de afbeelding.
 

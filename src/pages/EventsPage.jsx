@@ -1,30 +1,37 @@
 import { useState } from "react";
-import { Box, Button, Checkbox, Field, Heading, Input, Skeleton, Text } from "@chakra-ui/react";
+import { Box, Heading, Skeleton, Text } from "@chakra-ui/react";
 import { EventCard } from "../components/EventCard";
+import { EventSearchFilters } from "../components/EventSearchFilters";
 import { useAppData } from "../context/AppDataContext";
 
-export const EventsPage = () => <EventsList />;
-
-export const EventsList = () => {
+export const EventsPage = () => {
   const { events, categories, isLoading, error } = useAppData();
   const [searchText, setSearchText] = useState("");
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+
   if (isLoading) {
     return (
-      <Box
-        display="grid" 
-        gridTemplateColumns="repeat(auto-fill, minmax(min(100%, 350px), 1fr))"
-        gap="4"
-        justifyItems="center">
-        <Heading mb="4">Loading events...</Heading>
+      <Box p={{ base: "4", md: "6" }}>
+        {/* <Heading mb="4">Loading events...</Heading> */}
+        <EventSearchFilters
+          categories={categories}
+          searchText={searchText}
+          selectedCategoryIds={selectedCategoryIds}
+        />
+        <Box
+          display="grid" 
+          gridTemplateColumns="repeat(auto-fill, minmax(min(100%, 350px), 1fr))"
+          gap="4"
+          justifyItems="center">
+          {[0, 1, 2, 3].map((placeholder) => (
+            <Skeleton key={placeholder} w="320px" h="615px" borderRadius="md" boxShadow="md" />
+          ))}
 
-        {[0, 1, 2, 3].map((placeholder) => (
-          <Skeleton key={placeholder} w="320px" h="615px" borderRadius="md" boxShadow="md" />
-        ))}
-
+        </Box>
       </Box>
     );
   }
+
   if (error) {
     return <Text role="alert">Could not load events: {error}</Text>;
   }
@@ -51,42 +58,15 @@ export const EventsList = () => {
 
   return (
     <Box p={{ base: "4", md: "6" }}>
-      <Box mb="6" display="grid" gap="4">
-        <Field.Root>
-          <Field.Label>Search events by title</Field.Label>
-          <Input
-            type="search"
-            value={searchText}
-            onChange={(changeEvent) => setSearchText(changeEvent.target.value)}
-            placeholder="Search events"
-          />
-        </Field.Root>
-        <Box as="fieldset">
-          <Text as="legend" fontWeight="semibold" mb="2">Filter by category</Text>
-          <Box display="flex" flexWrap="wrap" gap="4">
-            {categories.map((category) => (
-              <Checkbox.Root
-                key={category.id}
-                checked={selectedCategoryIds.includes(String(category.id))}
-                onCheckedChange={({ checked }) => toggleCategory(category.id, checked)}
-              >
-                <Checkbox.HiddenInput />
-                <Checkbox.Control />
-                <Checkbox.Label>{category.name}</Checkbox.Label>
-              </Checkbox.Root>
-            ))}
-          </Box>
-        </Box>
-        <Button
-          type="button"
-          variant="subtle"
-          alignSelf="start"
-          onClick={clearFilters}
-          disabled={!searchText && selectedCategoryIds.length === 0}
-        >
-          Clear search and filters
-        </Button>
-      </Box>
+      <EventSearchFilters
+        categories={categories}
+        searchText={searchText}
+        selectedCategoryIds={selectedCategoryIds}
+        onSearchTextChange={setSearchText}
+        onToggleCategory={toggleCategory}
+        onClearFilters={clearFilters}
+      />
+
       {filteredEvents.length > 0 ? (
         <Box
           display="grid"
