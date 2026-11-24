@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Box, Heading, Skeleton, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { Box, IconButton, Skeleton, Text } from "@chakra-ui/react";
+import { LuArrowUp } from "react-icons/lu";
 import { EventCard } from "../components/EventCard";
 import { EventSearchFilters } from "../components/EventSearchFilters";
 import { useAppData } from "../context/AppDataContext";
@@ -8,6 +9,17 @@ export const EventsPage = () => {
   const { events, categories, isLoading, error } = useAppData();
   const [searchText, setSearchText] = useState("");
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
+
+  useEffect(() => {
+    const updateScrollToTopVisibility = () => {
+      setShowScrollToTop(window.scrollY > 0);
+    };
+
+    updateScrollToTopVisibility();
+    window.addEventListener("scroll", updateScrollToTopVisibility, { passive: true });
+    return () => window.removeEventListener("scroll", updateScrollToTopVisibility);
+  }, []);
 
   if (isLoading) {
     return (
@@ -90,6 +102,22 @@ export const EventsPage = () => {
         </Box>
       ) : (
         <Text role="status">No events match your search and selected categories.</Text>
+      )}
+      {showScrollToTop && (
+        <IconButton
+          aria-label="Scroll to top"
+          title="Scroll to top"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          position="fixed"
+          right="6"
+          bottom="6"
+          zIndex="overlay"
+          borderRadius="full"
+          boxSize="12"
+          boxShadow="lg"
+        >
+          <LuArrowUp />
+        </IconButton>
       )}
     </Box>
   );
