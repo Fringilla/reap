@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { LuPenLine, LuSave, LuSquareX } from "react-icons/lu";
 import { useNavigate } from "react-router";
 import {
   Box,
@@ -149,7 +150,7 @@ export function EventDialog({
             <Box as="form" display="flex" flexDirection="column" flex="1" minH="0" gap="4" onSubmit={handleSubmit} noValidate>
               <Dialog.Body flex="1" minH="0" overflowY="auto">
                 <Field.Root>
-                  <Field.Label>Title</Field.Label>
+                  <Field.Label>Title *</Field.Label>
                   <Input
                     value={isEditing ? formData.title : event.title}
                     onChange={updateFormField("title")}
@@ -158,7 +159,7 @@ export function EventDialog({
                   />
                 </Field.Root>
                 <Field.Root>
-                  <Field.Label>Description</Field.Label>
+                  <Field.Label>Description *</Field.Label>
                   <Textarea
                     value={isEditing ? formData.description : event.description}
                     onChange={updateFormField("description")}
@@ -177,7 +178,7 @@ export function EventDialog({
                   />
                 </Field.Root>
                 <Field.Root>
-                  <Field.Label>Location</Field.Label>
+                  <Field.Label>Location *</Field.Label>
                   <Input
                     value={isEditing ? formData.location : event.location}
                     onChange={updateFormField("location")}
@@ -186,7 +187,7 @@ export function EventDialog({
                   />
                 </Field.Root>
                 <Field.Root>
-                  <Field.Label>Start time</Field.Label>
+                  <Field.Label>Start time *</Field.Label>
                   <Input
                     type={isEditing ? "datetime-local" : "text"}
                     value={isEditing ? formData.startTime : new Date(event.startTime).toLocaleString()}
@@ -197,7 +198,7 @@ export function EventDialog({
                   />
                 </Field.Root>
                 <Field.Root>
-                  <Field.Label>End time</Field.Label>
+                  <Field.Label>End time *</Field.Label>
                   <Input
                     type={isEditing ? "datetime-local" : "text"}
                     value={isEditing ? formData.endTime : new Date(event.endTime).toLocaleString()}
@@ -209,7 +210,7 @@ export function EventDialog({
                 </Field.Root>
                 {true || isEditing ? (
                   <Box as="fieldset" border="0" p="0" m="0" minW="0" aria-required="true">
-                    <Box as="legend" fontWeight="medium" mb="2">Categories</Box>
+                    <Box as="legend" fontWeight="medium" mb="2">Categories *</Box>
                     <Box display="flex" flexWrap="wrap" gap="3">
                       {categories.map((category) => (
                         <Checkbox.Root
@@ -238,7 +239,7 @@ export function EventDialog({
                   </Field.Root>
                 )}
                 <Field.Root>
-                  <Field.Label>Created by</Field.Label>
+                  <Field.Label>Created by *</Field.Label>
                   {isEditing ? (
                     <select
                       value={formData.createdBy}
@@ -261,9 +262,13 @@ export function EventDialog({
                 {isEditing ? (
                   <>
                     <Button type="submit" disabled={isSubmitting} colorPalette="blue" variant="subtle">
+                      <LuSave />
                       {isSubmitting ? "Saving..." : "Save"}
                     </Button>
-                    <Button type="button" colorPalette="gray" variant="subtle" onClick={closeDialog}>Cancel</Button>
+                    <Button type="button" colorPalette="gray" variant="subtle" onClick={closeDialog}>
+                      <LuSquareX />
+                      Cancel
+                    </Button>
                   </>
                 ) : (
                   <>
@@ -274,9 +279,13 @@ export function EventDialog({
                         setIsEditing(true);
                       }}
                     >
+                      <LuPenLine />
                       Edit
                     </Button>
-                    <Button type="button" colorPalette="gray" variant="subtle" onClick={closeDialog}>Close</Button>
+                    <Button type="button" colorPalette="gray" variant="subtle" onClick={closeDialog}>
+                      <LuSquareX />
+                      Close
+                    </Button>
                   </>
                 )}
               </Dialog.Footer>

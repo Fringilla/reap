@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { LuPenLine, LuSquareX, LuTrash } from "react-icons/lu";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Badge,
@@ -123,18 +124,24 @@ export const EventPage = () => {
           <Button type="button" colorPalette="blue" variant="subtle"
             onClick={() => 
               setIsEditOpen(true)
-            }>Edit
+            }>
+              <LuPenLine />
+              Edit
           </Button>
           <Button type="button" colorPalette="red" variant="subtle" 
             onClick={() => {
               setDeleteError("");
               setIsDeleteOpen(true);
-            }}>Delete Event
+            }}>
+              <LuTrash />
+              Delete
           </Button>
           <Button type="button" colorPalette="gray" variant="subtle"
             onClick={() => 
               navigate("/")
-            }>Close
+            }>
+              <LuSquareX />
+              Close
           </Button>
         </Card.Footer>
       </Card.Root>
@@ -175,6 +182,7 @@ export const EventPage = () => {
                   disabled={isDeleting}
                   onClick={handleDelete}
                 >
+                  <LuTrash />
                   {isDeleting ? "Deleting..." : "Delete"}
                 </Button>
               </Dialog.Footer>

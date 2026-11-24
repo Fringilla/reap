@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { LuPlus, LuSave, LuSquareX } from "react-icons/lu";
 import {
   Box,
   Button,
@@ -120,6 +121,7 @@ export function CreateEventDialog() {
           setIsOpen(true);
         }}
       >
+        <LuPlus />
         Add Event
       </Button>
       <Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
@@ -139,11 +141,11 @@ export function CreateEventDialog() {
                   ) : (
                     <>
                       <Field.Root>
-                        <Field.Label>Title</Field.Label>
+                        <Field.Label>Title *</Field.Label>
                         <Input value={formData.title} onChange={updateFormField("title")} required />
                       </Field.Root>
                       <Field.Root>
-                        <Field.Label>Description</Field.Label>
+                        <Field.Label>Description *</Field.Label>
                         <Textarea value={formData.description} onChange={updateFormField("description")} required />
                       </Field.Root>
                       <Field.Root>
@@ -151,11 +153,11 @@ export function CreateEventDialog() {
                         <Input type="url" value={formData.image} onChange={updateFormField("image")} />
                       </Field.Root>
                       <Field.Root>
-                        <Field.Label>Location</Field.Label>
+                        <Field.Label>Location *</Field.Label>
                         <Input value={formData.location} onChange={updateFormField("location")} required />
                       </Field.Root>
                       <Field.Root>
-                        <Field.Label>Start time</Field.Label>
+                        <Field.Label>Start time *</Field.Label>
                         <Input
                           type="datetime-local"
                           value={formData.startTime}
@@ -165,7 +167,7 @@ export function CreateEventDialog() {
                         />
                       </Field.Root>
                       <Field.Root>
-                        <Field.Label>End time</Field.Label>
+                        <Field.Label>End time *</Field.Label>
                         <Input
                           type="datetime-local"
                           value={formData.endTime}
@@ -175,7 +177,7 @@ export function CreateEventDialog() {
                         />
                       </Field.Root>
                       <Field.Root>
-                        <Field.Label>Created by</Field.Label>
+                        <Field.Label>Created by *</Field.Label>
                         <select
                           value={formData.createdBy}
                           onChange={updateFormField("createdBy")}
@@ -190,7 +192,7 @@ export function CreateEventDialog() {
                       </Field.Root>
                       <Box as="fieldset" border="0" p="0" m="0" minW="0" aria-required="true">
                         <Box as="legend" fontWeight="medium" mb="2">
-                          Categories (select at least one)
+                          Categories *(select at least one)
                         </Box>
                         <Box display="flex" flexWrap="wrap" gap="3">
                           {categories.map((category) => (
@@ -219,9 +221,11 @@ export function CreateEventDialog() {
                 </Dialog.Body>
                 <Dialog.Footer flexShrink="0">
                   <Button type="submit" colorPalette="blue" variant="subtle" disabled={isLoading || Boolean(error) || isSubmitting}>
+                    <LuSave />
                     {isSubmitting ? "Creating..." : "Create Event"}
                   </Button>
                   <Button type="button" colorPalette="gray" variant="subtle" onClick={() => handleOpenChange({ open: false })}>
+                    <LuSquareX />
                     Cancel
                   </Button>
                 </Dialog.Footer>
