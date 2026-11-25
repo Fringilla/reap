@@ -1,4 +1,4 @@
-import { Badge, Card, Image } from "@chakra-ui/react";
+import { Badge, Card, Image, Skeleton } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useAppData } from "../context/AppDataContext";
 
@@ -15,7 +15,11 @@ export function EventCard({ id, event }) {
       style={{ display: "block", color: "inherit", textDecoration: "none" }}
     >
       <Card.Root w="400px" overflow="hidden" borderRadius="md" boxShadow="md">
-        <Image src={event.image} alt={event.title} w="400px" h="180px" objectFit="cover" />
+        {event.image !== "" ? (
+          <Image src={event.image} alt={event.title} w="400px" h="180px" objectFit="cover" />
+        ) : (
+          <Skeleton variant="none" w={400} h={180} />
+        )}
         <Card.Header>
           <Card.Title color="orange.500">{event.title}</Card.Title>
         </Card.Header>

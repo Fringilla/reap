@@ -87,7 +87,11 @@ export const EventPage = () => {
   return (
     <Box maxW="4xl" mx="auto" p={{ base: "4", md: "8" }}>
       <Card.Root overflow="hidden">
-        <Image src={event.image} alt={event.title} w="100%" maxH="420px" objectFit="cover" />
+        {event.image !== "" ? (
+          <Image src={event.image} alt={event.title} w="400px" h="180px" objectFit="cover" />
+        ) : (
+          <Skeleton variant="none" w={400} h={180} />
+        )}
         <Card.Header>
           <Heading size="xl">{event.title}</Heading>
         </Card.Header>
