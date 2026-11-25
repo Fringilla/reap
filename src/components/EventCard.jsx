@@ -1,5 +1,6 @@
-import { Badge, Card, Image, Skeleton } from "@chakra-ui/react";
+import { Badge, Card, Center, Image } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import { BookImage } from "../components/ui/book-image";
 import { useAppData } from "../context/AppDataContext";
 
 export function EventCard({ id, event }) {
@@ -16,9 +17,11 @@ export function EventCard({ id, event }) {
     >
       <Card.Root w="400px" overflow="hidden" borderRadius="md" boxShadow="md">
         {event.image !== "" ? (
-          <Image src={event.image} alt={event.title} w="400px" h="180px" objectFit="cover" />
+          <Image src={event.image} alt={event.title} w={400}h={180} objectFit="cover" />
         ) : (
-          <Skeleton variant="none" w={400} h={180} />
+          <Center w={400} h={180}>
+            <BookImage />
+          </Center>
         )}
         <Card.Header>
           <Card.Title color="orange.500">{event.title}</Card.Title>

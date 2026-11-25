@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Card,
+  Center,
   CloseButton,
   Dialog,
   Heading,
@@ -16,6 +17,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { EventDialog } from "../components/EventDialog";
+import { BookImage } from "../components/ui/book-image";
 import { toaster } from "../components/ui/toaster";
 import { useAppData } from "../context/AppDataContext";
 
@@ -85,12 +87,14 @@ export const EventPage = () => {
   const creatorName = getCreatorName(event.createdBy);
 
   return (
-    <Box maxW="4xl" mx="auto" p={{ base: "4", md: "8" }}>
+    <Box maxW="2xl" mx="auto" p={{ base: "4", md: "8" }}>
       <Card.Root overflow="hidden">
         {event.image !== "" ? (
-          <Image src={event.image} alt={event.title} w="400px" h="180px" objectFit="cover" />
+          <Image src={event.image} alt={event.title} w={400} h={180} objectFit="cover" />
         ) : (
-          <Skeleton variant="none" w={400} h={180} />
+          <Center w={400} h={180}>
+            <BookImage />
+          </Center>
         )}
         <Card.Header>
           <Heading size="xl">{event.title}</Heading>
